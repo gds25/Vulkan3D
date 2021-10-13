@@ -10,6 +10,7 @@
 #include "gf3d_model.h"
 #include "gf3d_camera.h"
 #include "gf3d_texture.h"
+#include "entity.h"
 
 int main(int argc,char *argv[])
 {
@@ -42,12 +43,20 @@ int main(int argc,char *argv[])
         0,                      //fullscreen
         validate                //validation
     );
-	slog_sync();
+	//slog_sync();
+
+    // --- initialize entity system
+    entity_system_init(1024);
 
     // main game loop
     slog("gf3d main loop begin");
+
 	slog_sync();
-	model = gf3d_model_load("dino");
+    
+    Entity *agumon = agumon_new();
+
+	/*
+    model = gf3d_model_load("dino");
 	gfc_matrix_identity(modelMat);
 	model2 = gf3d_model_load("dino");
     gfc_matrix_identity(modelMat2);
@@ -55,12 +64,14 @@ int main(int argc,char *argv[])
             modelMat2,
             vector3d(10,0,0)
         );
+    */
     while(!done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
         //update game things here
-        
+       
+        /*
         gf3d_vgraphics_rotate_camera(0.001);
         gfc_matrix_rotate(
             modelMat,
@@ -72,6 +83,7 @@ int main(int argc,char *argv[])
             modelMat2,
             0.002,
             vector3d(0,0,1));
+        */
 
         // configure render command for graphics command pool
         // for each mesh, get a command and configure it from the pool
@@ -79,12 +91,17 @@ int main(int argc,char *argv[])
         gf3d_pipeline_reset_frame(gf3d_vgraphics_get_graphics_pipeline(),bufferFrame);
             commandBuffer = gf3d_command_rendering_begin(bufferFrame);
 
-                gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat);
-                gf3d_model_draw(model2,bufferFrame,commandBuffer,modelMat2);
+            // entity_draw_all would go here instead of model_draw //parameters bufferframe, commandbuffer
+                entity_draw_all(bufferFrame, commandBuffer);
+                
+                //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat);
+                //gf3d_model_draw(model2,bufferFrame,commandBuffer,modelMat2);
                 
             gf3d_command_rendering_end(commandBuffer);
             
         gf3d_vgraphics_render_end(bufferFrame);
+
+        entity_think_all();
 
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
     }    

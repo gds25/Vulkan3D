@@ -46,7 +46,7 @@ void gf3d_model_manager_init(Uint32 max_models,Uint32 chain_length,VkDevice devi
 {
     if (max_models == 0)
     {
-        slog("cannot intilizat model manager for 0 models");
+        slog("cannot intialize model manager for 0 models");
         return;
     }
     gf3d_model.chain_length = chain_length;
@@ -109,6 +109,7 @@ void gf3d_model_delete(Model *model)
 
     gf3d_mesh_free(model->mesh);
     gf3d_texture_free(model->texture);
+    memset(model, 0, sizeof(model));
 }
 
 void gf3d_model_draw(Model *model,Uint32 bufferFrame, VkCommandBuffer commandBuffer,Matrix4 modelMat)

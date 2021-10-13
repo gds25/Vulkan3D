@@ -102,9 +102,9 @@ void gf3d_vgraphics_init(
 {
     VkDevice device;
     
-    gfc_matrix_identity(gf3d_vgraphics.ubo.model);
-    gfc_matrix_identity(gf3d_vgraphics.ubo.view);
-    gfc_matrix_identity(gf3d_vgraphics.ubo.proj);
+    gfc_matrix_identity(gf3d_vgraphics.ubo.model); // on a per model basis
+    gfc_matrix_identity(gf3d_vgraphics.ubo.view); // point of view
+    gfc_matrix_identity(gf3d_vgraphics.ubo.proj); // perspective falloff, to be calculated
     gfc_matrix_view(
         gf3d_vgraphics.ubo.view,
         vector3d(2,40,2),
@@ -202,7 +202,8 @@ void gf3d_vgraphics_setup(
     SDL_Vulkan_GetInstanceExtensions(gf3d_vgraphics.main_window, &(gf3d_vgraphics.sdl_extension_count), NULL);
     if (gf3d_vgraphics.sdl_extension_count > 0)
     {
-        gf3d_vgraphics.sdl_extension_names = gfc_allocate_array(sizeof(const char *),gf3d_vgraphics.sdl_extension_count);
+        gf3d_vgraphics.sdl_extension_names = gfc_allocate_array(sizeof(const char *),gf3d_vgraphics.sdl_extension_count); // populating indexes of first array with address of indexes of second array
+                                                                                                                          // doesn't copy info, just points to it
         
         SDL_Vulkan_GetInstanceExtensions(gf3d_vgraphics.main_window, &(gf3d_vgraphics.sdl_extension_count), gf3d_vgraphics.sdl_extension_names);
         for (i = 0; i < gf3d_vgraphics.sdl_extension_count;i++)

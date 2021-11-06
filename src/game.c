@@ -78,7 +78,7 @@ int main(int argc,char *argv[])
 
     player_new(vector3d(0, 0, 0));
 
-    monster_new(vector3d(0, 300, 0));
+    monster_new(vector3d(0, 100, 0));
 
     while(!done)
     {

@@ -12,6 +12,7 @@ Entity* monster_new(Vector3D position);
 void monster_think(Entity* self);
 void monster_update(Entity* self);
 void monster_chase(Entity* self, Vector3D playerPos);
+void monster_pace(Entity* self);
 void monster_attack();
 
 #endif

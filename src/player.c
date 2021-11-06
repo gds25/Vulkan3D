@@ -4,9 +4,8 @@
 #include "gf3d_camera.h"
 #include "player.h"
 
+static Entity player = {0};
 
-void player_think(Entity* self);
-void player_update(Entity* self);
 //void player_update_view(Entity* self);
 
 Entity* player_new(Vector3D position)
@@ -21,7 +20,7 @@ Entity* player_new(Vector3D position)
     }
 
     ent->model = gf3d_model_load("dino");
-    gfc_matrix_rotate(ent->modelMat, ent->modelMat, 90, vector3d(1, 0, 0));
+   // gfc_matrix_rotate(ent->modelMat, ent->modelMat, 90, vector3d(1, 0, 0));
     ent->think = player_think;
     ent->update = player_update;
     vector3d_copy(ent->position, position);
@@ -37,7 +36,7 @@ Entity* player_new(Vector3D position)
     //self->cameraPosition.y = self->position.y - 100;
     ent->cameraPosition.z = ent->position.z + 50;
 
-    gf3d_camera_look_at(ent->cameraPosition, ent->position, vector3d(0, 0, 1));
+   // gf3d_camera_look_at(ent->cameraPosition, ent->position, vector3d(0, 0, 1));
     //gfc_matrix_rotate(self->modelMat, self->modelMat, self->rotation.z, vector3d(0, 0, 1));
     return ent;
 }
@@ -50,13 +49,13 @@ void player_think(Entity* self)
     if (keys[SDL_SCANCODE_W]) { 
         self->position.y += (0.10 * cos(self->rotation.z)); 
         self->position.x -= (0.10 * sin(self->rotation.z)); 
-        slog("position x = %f; position y = %f", self->position.x, self->position.y); 
-        gfc_matrix_rotate(self->modelMat, self->modelMat, self->rotation.z, vector3d(0, 0, 1));
+        //slog("position x = %f; position y = %f", self->position.x, self->position.y); 
+        gfc_matrix_rotate(self->modelMat, self->modelMat, 180, vector3d(0, 0, 1));
     }
-    if (keys[SDL_SCANCODE_S]) { 
+    if (keys[SDL_SCANCODE_S]) {
         self->position.y -= (0.10 * cos(self->rotation.z)); 
         self->position.x += (0.10 * sin(self->rotation.z)); 
-        slog("position x = % f; position y = % f", self->position.x, self->position.y); 
+        //slog("position x = % f; position y = % f", self->position.x, self->position.y); 
         //gfc_matrix_rotate(self->modelMat, self->modelMat, self->rotation.z, vector3d(0, 0, 1));
     }
     if (keys[SDL_SCANCODE_A]) {
@@ -64,7 +63,7 @@ void player_think(Entity* self)
         self->position.x -= (0.10 * cos(self->rotation.z)); 
        // slog("position x = %f; position y = %f", self->position.x, self->position.y);
     }
-    if (keys[SDL_SCANCODE_D]) { 
+    if (keys[SDL_SCANCODE_D]) {
         self->position.y += (0.10 * sin(self->rotation.z));
         self->position.x += (0.10 * cos(self->rotation.z));
     }
@@ -73,13 +72,17 @@ void player_think(Entity* self)
 
     if (keys[SDL_SCANCODE_UP])self->rotation.x += 0.0010;
     if (keys[SDL_SCANCODE_DOWN])self->rotation.x -= 0.0010;
-    if (keys[SDL_SCANCODE_LEFT]){self->rotation.z -= 0.0010; slog("rotation z = %f", self->rotation.z); }
-    if (keys[SDL_SCANCODE_RIGHT]){self->rotation.z += 0.0010; slog("rotation z = %f", self->rotation.z); }
+    if (keys[SDL_SCANCODE_LEFT])self->rotation.z -= 0.0010; //slog("rotation z = %f", self->rotation.z); }
+    if (keys[SDL_SCANCODE_RIGHT])self->rotation.z += 0.0010;// slog("rotation z = %f", self->rotation.z); }
 
+    set_player_position(self); 
 
+    int x, y;
+    SDL_GetMouseState(&x, &y);
 
+    SDL_Log("x and y of mouse: %i, %i", x, y);
    // slog("in player think");
-
+    self->rotation.z = (2*x)/(1200/M_PI);
 }
 
 void player_update(Entity* self)
@@ -97,18 +100,14 @@ void player_update(Entity* self)
 
     gfc_matrix_make_translation(self->modelMat, self->position);
 
-
 }
 
-   
-
-
-void entity_think(Entity* self) {
-    player_think(self);
+Vector3D get_player_position() {
+    return player.position;
 }
 
-void entity_update(Entity *self) {
-    player_update(self);
+Vector3D set_player_position(Entity* self) {
+    player.position = self->position;
 }
 
 /*eol@eof*/

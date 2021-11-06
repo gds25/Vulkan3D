@@ -76,7 +76,9 @@ int main(int argc,char *argv[])
 
     gf3d_camera_set_scale(vector3d(1, 1, 1));
 
-    Entity *player = player_new(vector3d(0, 0, 0));
+    player_new(vector3d(0, 0, 0));
+
+    monster_new(vector3d(0, 300, 0));
 
     while(!done)
     {
@@ -122,8 +124,6 @@ int main(int argc,char *argv[])
             gf3d_command_rendering_end(commandBuffer);
             
         gf3d_vgraphics_render_end(bufferFrame);
-
-        
 
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
     }    

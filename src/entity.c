@@ -71,7 +71,10 @@ void entity_draw_all(Uint32 bufferFrame, VkCommandBuffer commandBuffer) {
 	}
 }
 
-void entity_think(Entity* self); // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
+void entity_think(Entity* self) {
+	if (!self)return;
+	if (self->think)self->think(self);
+} // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
 
 void entity_think_all() {
 	for (int i = 0; i < entity_manager.entity_count; i++) {
@@ -87,7 +90,10 @@ void entity_think_all() {
 	}
 }
 
-void entity_update(Entity* self); // {
+void entity_update(Entity* self) {
+	if (!self)return;
+	if (self->update)self->update(self);
+} // {
 	//if (!self)return;
 	// HANDLE ALL COMMON UPDATE STUFF
 

@@ -44,6 +44,12 @@ uint32_t gf3d_vgraphics_find_memory_type(uint32_t typeFilter, VkMemoryPropertyFl
 
 void gf3d_vgraphics_rotate_camera(float degrees);
 
+/**
+ * @brief get the matrix used for rendering the view
+ * @return the view matrix sent to every rendering call
+ */
+Matrix4* gf3d_vgraphics_get_view_matrix();
+
 VkBuffer gf3d_vgraphics_get_uniform_buffer_by_index(Uint32 index);
 UniformBufferObject gf3d_vgraphics_get_uniform_buffer_object();
 

@@ -1,5 +1,5 @@
 #include "simple_logger.h"
-
+#include "gfc_matrix.h"
 #include "entity.h"
 
 typedef struct {
@@ -71,12 +71,51 @@ void entity_draw_all(Uint32 bufferFrame, VkCommandBuffer commandBuffer) {
 	}
 }
 
-void *entity_think(Entity* self); // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
+void entity_think(Entity* self); // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
 
-void* entity_think_all() {
+void entity_think_all() {
 	for (int i = 0; i < entity_manager.entity_count; i++) {
 		if (!entity_manager.entity_list[i]._inuse)
 			continue;
+		if (!entity_manager.entity_list[i].think) {
+			slog("Entity (%s) does not have a think function.", i);
+			return;
+			//entity_manager.entity_list[i].think;
+		}
+		//entity_think;
 		entity_think(&entity_manager.entity_list[i]);
+	}
+}
+
+void entity_update(Entity* self); // {
+	//if (!self)return;
+	// HANDLE ALL COMMON UPDATE STUFF
+
+	//vector3d_add(self->position, self->position, self->velocity);
+	//vector3d_add(self->velocity, self->acceleration, self->velocity);
+
+	//gfc_matrix_identity(self->modelMat);
+
+    /*gfc_matrix_scale(self->modelMat, self->scale);
+
+	gfc_matrix_rotate(self->modelMat, self->modelMat, self->rotation.z, vector3d(0, 0, 1));
+	gfc_matrix_rotate(self->modelMat, self->modelMat, self->rotation.y, vector3d(0, 1, 0));
+	gfc_matrix_rotate(self->modelMat, self->modelMat, self->rotation.x, vector3d(1, 0, 0));
+
+	gfc_matrix_translate(self->modelMat, self->position);*/
+
+	//if (self->update)self->update(self);
+//}
+// vector3d_add(position,position,velocity)s
+void entity_update_all() {
+	int i;
+	for (i = 0; i < entity_manager.entity_count; i++)
+	{
+		if (!entity_manager.entity_list[i]._inuse)// not used yet
+		{
+			continue;// skip this iteration of the loop
+		}
+		//entity_update;
+		entity_update(&entity_manager.entity_list[i]);
 	}
 }

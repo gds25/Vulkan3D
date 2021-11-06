@@ -8,9 +8,20 @@
 typedef struct Entity_S {
 	Uint8	_inuse;
 	Matrix4 modelMat;
+	int frame;
 	Model* model;
+	Model* modelList;
 	void (*think)(struct Entity_S* self);
+	void (*update)(struct Entity_S* self);
 	Uint32	health;
+
+	Vector3D position;
+	Vector3D cameraPosition;
+	Vector3D velocity;
+	Vector3D acceleration;
+
+	Vector3D scale;
+	Vector3D rotation;
 } Entity;
 
 /**
@@ -54,8 +65,12 @@ void entity_draw_all(Uint32 bufferFrame, VkCommandBuffer commandBuffer);
 * @brief entity logic
 * @param self the entity in question
 */
-void *entity_think(Entity* self); // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
+void entity_think(Entity* self); // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
 
-void* entity_think_all(); // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
+void entity_think_all(); // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
+
+void entity_update(Entity* self);
+// vector3d_add(position,position,velocity)s
+void entity_update_all();
 
 #endif

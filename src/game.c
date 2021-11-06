@@ -10,7 +10,11 @@
 #include "gf3d_model.h"
 #include "gf3d_camera.h"
 #include "gf3d_texture.h"
+
 #include "entity.h"
+#include "agumon.h"
+#include "player.h"
+#include "world.h"
 
 int main(int argc,char *argv[])
 {
@@ -24,6 +28,8 @@ int main(int argc,char *argv[])
     Matrix4 modelMat;
     Model *model2;
     Matrix4 modelMat2;
+
+    World* w;
     
     for (a = 1; a < argc;a++)
     {
@@ -43,7 +49,7 @@ int main(int argc,char *argv[])
         0,                      //fullscreen
         validate                //validation
     );
-	//slog_sync();
+	slog_sync();
 
     // --- initialize entity system
     entity_system_init(1024);
@@ -52,8 +58,10 @@ int main(int argc,char *argv[])
     slog("gf3d main loop begin");
 
 	slog_sync();
+
+    w = world_load("config/castleworld.json");
     
-    Entity *agumon = agumon_new();
+    //Entity *agumon = agumon_new();
 
 	/*
     model = gf3d_model_load("dino");
@@ -65,6 +73,11 @@ int main(int argc,char *argv[])
             vector3d(10,0,0)
         );
     */
+
+    gf3d_camera_set_scale(vector3d(1, 1, 1));
+
+    Entity *player = player_new(vector3d(0, 0, 0));
+
     while(!done)
     {
         SDL_PumpEvents();   // update SDL's internal event structures
@@ -85,11 +98,20 @@ int main(int argc,char *argv[])
             vector3d(0,0,1));
         */
 
+        entity_think_all();
+        entity_update_all();
+
         // configure render command for graphics command pool
         // for each mesh, get a command and configure it from the pool
+
+        gf3d_camera_update_view();
+        gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
+
         bufferFrame = gf3d_vgraphics_render_begin();
         gf3d_pipeline_reset_frame(gf3d_vgraphics_get_graphics_pipeline(),bufferFrame);
             commandBuffer = gf3d_command_rendering_begin(bufferFrame);
+
+                world_draw(w, bufferFrame, commandBuffer);
 
             // entity_draw_all would go here instead of model_draw //parameters bufferframe, commandbuffer
                 entity_draw_all(bufferFrame, commandBuffer);
@@ -101,10 +123,12 @@ int main(int argc,char *argv[])
             
         gf3d_vgraphics_render_end(bufferFrame);
 
-        entity_think_all();
+        
 
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
     }    
+
+    world_delete(w);
     
     vkDeviceWaitIdle(gf3d_vgraphics_get_default_logical_device());    
     //cleanup

@@ -44,6 +44,7 @@ World* world_load(char* filename)
     {
         w->worldModel = gf3d_model_load((char*)modelName);
         gfc_matrix_identity(w->modelMat);
+        gfc_matrix_rotate(w->modelMat, w->modelMat, M_PI/2, vector3d(1, 0, 0));
        /* gfc_matrix_scale(
             w->modelMat,
             vector3d(10, 10, 10)

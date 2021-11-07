@@ -60,6 +60,7 @@ void entity_free_all() {
 void entity_draw(Entity* self, Uint32 bufferFrame, VkCommandBuffer commandBuffer) {
 	if (!self)
 		return;
+	//slog("model: %i", self->model);
 	gf3d_model_draw(self->model, bufferFrame, commandBuffer, self->modelMat);
 }
 

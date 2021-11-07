@@ -59,7 +59,7 @@ int main(int argc,char *argv[])
 
 	slog_sync();
 
-    w = world_load("config/castleworld.json");
+    w = world_load("config/world.json");
     
     //Entity *agumon = agumon_new();
 
@@ -76,9 +76,9 @@ int main(int argc,char *argv[])
 
     gf3d_camera_set_scale(vector3d(1, 1, 1));
 
-    player_new(vector3d(0, 0, 0));
+    player_new(vector3d(0, 0, 10));
 
-    monster_new(vector3d(0, 100, 0));
+    monster_new(vector3d(0, 100, 10));
 
     while(!done)
     {
@@ -105,22 +105,24 @@ int main(int argc,char *argv[])
 
         // configure render command for graphics command pool
         // for each mesh, get a command and configure it from the pool
-
-        gf3d_camera_update_view();
+        //slog("before camera");
+        //gf3d_camera_update_view();
         gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
 
         bufferFrame = gf3d_vgraphics_render_begin();
         gf3d_pipeline_reset_frame(gf3d_vgraphics_get_graphics_pipeline(),bufferFrame);
             commandBuffer = gf3d_command_rendering_begin(bufferFrame);
 
+            //slog("before world draw");
                 world_draw(w, bufferFrame, commandBuffer);
 
+                //slog("before draw entites");
             // entity_draw_all would go here instead of model_draw //parameters bufferframe, commandbuffer
                 entity_draw_all(bufferFrame, commandBuffer);
                 
                 //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat);
                 //gf3d_model_draw(model2,bufferFrame,commandBuffer,modelMat2);
-                
+                //slog("after draw entities");
             gf3d_command_rendering_end(commandBuffer);
             
         gf3d_vgraphics_render_end(bufferFrame);

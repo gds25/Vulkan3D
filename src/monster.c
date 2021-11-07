@@ -63,7 +63,7 @@ float get_distance_from_entity_squared(Entity *self, Vector3D pos) {
 }
 
 void monster_chase(Entity* self, Vector3D playerPos) {
-    slog("here");
+    //slog("here");
     self->rotation.z = atan(playerPos.y/playerPos.x);
 
     self->position.x += (0.03 * sin(self->rotation.z));

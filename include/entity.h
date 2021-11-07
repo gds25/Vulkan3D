@@ -8,26 +8,46 @@
 typedef struct Entity_S {
 	Uint8	_inuse;
 	Matrix4 modelMat;
-	int frame;
+	Uint8 attackFrame;
+	Model* idleModel;
 	Model* model;
-	Model* modelList;
+	Model* modelList_attack[15];
 	void (*think)(struct Entity_S* self);
 	void (*update)(struct Entity_S* self);
 	Uint32	health;
+	Uint32  healthRegen;
+	Uint32	mana;
+	Uint32  armor;
+	Uint32  damage;
 
 	Vector3D position;
 	Vector3D cameraPosition;
 	Vector3D velocity;
 	Vector3D acceleration;
 
-	int isJumping;
+	Uint8 isJumping;
+	Uint8 isAttacking;
+	Uint8 isIdle;
+	Uint8 poweredUp;
 
-	unsigned int currentTime;
-	unsigned int lastTime;
+	Uint32 currentTime;
+	Uint32 lastTime;
+
+	Uint32 jumpTime;
+	Uint32 lastJumpTime;
+
+	Uint32 powerUpTime;
+	Uint32 lastPowerUpTime;
 
 	Vector3D scale;
 	Vector3D rotation;
+
+	Vector3D maxAABB;
+	Vector3D minAABB;
+
 } Entity;
+
+void model_list_init(Entity* self, Model* modelList[], Uint32 max);
 
 /**
 * @brief initialize entity subsystem

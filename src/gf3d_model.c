@@ -90,6 +90,11 @@ Model * gf3d_model_load(char * filename)
         model->texture = gf3d_texture_load("images/playermodel.png");
         //snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
     }
+    else if (strncmp(filename, "dino", 4) == 0) {
+        //slog("got the right texture");
+        model->texture = gf3d_texture_load("images/dino.png");
+        //snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
+    }
     else {
         snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
         model->texture = gf3d_texture_load(assetname);

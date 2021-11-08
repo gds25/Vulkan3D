@@ -18,7 +18,7 @@ void player_think(Entity* self);
 void player_update(Entity* self);
 
 void player_jump(Entity* self);
-void player_attack(Entity* self, Uint8 attackFrame);
+void player_attack(Entity* self);
 
 Vector3D get_player_position();
 Vector3D set_player_position(Entity* self);

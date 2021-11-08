@@ -1,0 +1,32 @@
+newmtl CubeFBXASC046003SG
+illum 4
+Kd 0.80 0.80 0.80
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.20 0.20 0.20
+Ns 23.00
+newmtl CubeFBXASC046003SG1
+illum 4
+Kd 0.80 0.11 0.09
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.20 0.03 0.02
+Ns 23.00
+newmtl CubeFBXASC046003SG3
+illum 4
+Kd 0.38 0.73 0.80
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.10 0.18 0.20
+Ns 23.00
+newmtl CubeFBXASC046003SG5
+illum 4
+Kd 0.80 0.80 0.80
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.20 0.20 0.20
+Ns 23.00

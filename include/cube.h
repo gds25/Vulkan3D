@@ -4,18 +4,17 @@
 #include "entity.h"
 
 /**
- * @brief Create a new cube entity to populate the world
- * @param position where to spawn the fireball at (most likely at current player position)
- * @param rotation direction in which the fireball will travel (radian angle around origin)
- * @return NULL on error, or a fireball entity pointer on success
+ * @brief Create a new block entity to populate the world
+ * @param position where to spawn the block at 
+ * @param rotation direction cube is facing
+ * @return NULL on error, or a block entity pointer on success
  */
 Entity* cube_new(Vector3D position, float rotation);
 
 /**
-* @brief fireball logic
+* @brief get block's min and max axis aligned bounding box points
 * @param self the entity in question
 */
-void fireball_think(Entity* self);
-void fireball_update(Entity* self);
+void cube_get_aabb(Entity* self);
 
-void fireball_on_hit(Entity* self);
+#endif

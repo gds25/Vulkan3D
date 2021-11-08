@@ -11,7 +11,7 @@ typedef struct Entity_S {
 	Uint8 attackFrame;
 	Model* idleModel;
 	Model* model;
-	Model* modelList_attack[15];
+	Model* modelList_attack[100];
 	void (*think)(struct Entity_S* self);
 	void (*update)(struct Entity_S* self);
 	Uint32	health;
@@ -21,6 +21,7 @@ typedef struct Entity_S {
 	Uint32  damage;
 
 	Vector3D position;
+	Vector3D futurePosition;
 	Vector3D cameraPosition;
 	Vector3D velocity;
 	Vector3D acceleration;
@@ -45,9 +46,29 @@ typedef struct Entity_S {
 	Vector3D maxAABB;
 	Vector3D minAABB;
 
+	Vector3D maxWeaponAABB;
+	Vector3D minWeaponAABB;
+
+	Uint8 isStatic;
+	Uint8 isPlayer;
+	Uint8 isMonster;
+	Uint8 attackedThisSwing;
+
 } Entity;
 
-void model_list_init(Entity* self, Model* modelList[], Uint32 max);
+/**
+* @brief entity collision checker
+*/
+void check_collisions();
+
+/**
+* @brief populate a list of models for keyframed animation
+* @param self entity to store models for
+* @param max maximum amount of models in the list
+* @param modelList[] list to populate
+* @param prefix name of model files, all should have the same name with a number at the end
+*/
+void model_list_init(Entity* self, Uint32 max, Model* modelList[], char* prefix);
 
 /**
 * @brief initialize entity subsystem
@@ -92,10 +113,20 @@ void entity_draw_all(Uint32 bufferFrame, VkCommandBuffer commandBuffer);
 */
 void entity_think(Entity* self); // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
 
-void entity_think_all(); // , Uint32 bufferFrame, VkCommandBuffer commandBuffer);
+/**
+* @brief loop through think function of every entity
+*/
+void entity_think_all(); 
 
+/**
+* @brief update entity in the world
+* @param self the entity in question
+*/
 void entity_update(Entity* self);
-// vector3d_add(position,position,velocity)s
+
+/**
+* @brief loop through update function of every entity
+*/
 void entity_update_all();
 
 #endif

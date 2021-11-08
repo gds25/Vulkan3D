@@ -5,9 +5,11 @@
 typedef struct {
 	Entity* entity_list;
 	Uint32  entity_count;
+	Uint32  current_ent_total;
 }EntityManager;
 
 static EntityManager entity_manager = { 0 };
+
 
 void entity_system_close() {
 	entity_free_all();
@@ -32,6 +34,7 @@ Entity* entity_new() {
 		if (!entity_manager.entity_list[i]._inuse) {
 			entity_manager.entity_list[i]._inuse = 1;
 			gfc_matrix_identity(entity_manager.entity_list[i].modelMat);
+			entity_manager.current_ent_total++;
 			return &entity_manager.entity_list[i];
 		}
 	}
@@ -82,8 +85,8 @@ void entity_think_all() {
 		if (!entity_manager.entity_list[i]._inuse)
 			continue;
 		if (!entity_manager.entity_list[i].think) {
-			slog("Entity (%s) does not have a think function.", i);
-			return;
+			//slog("Entity (%s) does not have a think function.", i);
+			continue;
 			//entity_manager.entity_list[i].think;
 		}
 		//entity_think;
@@ -123,6 +126,80 @@ void entity_update_all() {
 			continue;// skip this iteration of the loop
 		}
 		//entity_update;
+		if (!entity_manager.entity_list[i].update) {
+			//slog("Entity (%s) does not have an update function.", i);
+			continue;
+			//entity_manager.entity_list[i].think;
+		}
 		entity_update(&entity_manager.entity_list[i]);
+	}
+}
+
+void model_list_init(Entity* self, Uint32 max, Model* modelList[], char* prefix) {
+	//self->modelList_attack = gfc_allocate_array(sizeof(Model*), max);
+	if (modelList == NULL) {
+		//slog("Model system initialization error: cannot allocate 0 entities.");
+		return;
+	}
+	for (int i = 0; i < max; i++) {
+		TextLine modelName;
+		snprintf(modelName, GFCLINELEN, prefix, i);
+		slog(modelName);
+		// Model modelInsert = gf3d_model_load(modelName);
+		 //memcpy(&self->modelList_attack[i], gf3d_model_load(modelName), sizeof(Model*));
+		modelList[i] = gf3d_model_load(modelName);
+		//slog("model: %i", self->modelList_attack[i]);
+	}
+}
+
+void check_collisions() {
+	for (int i = 0; i < entity_manager.current_ent_total; i++) {
+		for (int j = 0; j < entity_manager.current_ent_total; j++) {
+			if (i == j) continue;
+			if (entity_manager.entity_list[i].isPlayer && entity_manager.entity_list[j].isMonster) {
+				//slog("here");
+				if (entity_manager.entity_list[i].attackFrame > 4 && entity_manager.entity_list[i].attackFrame < 11 && !entity_manager.entity_list[j].attackedThisSwing) {
+					//slog("i max AABB x, y, z: %f, %f, %f, min AABB x, y, z: %f, %f, %f", entity_manager.entity_list[i].maxWeaponAABB.x, entity_manager.entity_list[i].maxWeaponAABB.y, entity_manager.entity_list[i].maxWeaponAABB.z, entity_manager.entity_list[i].minWeaponAABB.x, entity_manager.entity_list[i].minWeaponAABB.y, entity_manager.entity_list[i].minWeaponAABB.z);
+					//slog("j max AABB x, y, z: %f, %f, %f, min AABB x, y, z: %f, %f, %f", entity_manager.entity_list[j].maxAABB.x, entity_manager.entity_list[j].maxAABB.y, entity_manager.entity_list[j].maxAABB.z, entity_manager.entity_list[j].minAABB.x, entity_manager.entity_list[j].minAABB.y, entity_manager.entity_list[j].minAABB.z);
+					if (entity_manager.entity_list[i].maxWeaponAABB.x >= entity_manager.entity_list[j].minAABB.x &&
+						entity_manager.entity_list[i].maxWeaponAABB.y >= entity_manager.entity_list[j].minAABB.y &&
+						entity_manager.entity_list[i].maxWeaponAABB.z >= entity_manager.entity_list[j].minAABB.z &&
+						entity_manager.entity_list[i].minWeaponAABB.x <= entity_manager.entity_list[j].maxAABB.x &&
+						entity_manager.entity_list[i].minWeaponAABB.y <= entity_manager.entity_list[j].maxAABB.y &&
+						entity_manager.entity_list[i].minWeaponAABB.z <= entity_manager.entity_list[j].maxAABB.z) {
+						entity_manager.entity_list[j].attackedThisSwing = 1;
+						entity_manager.entity_list[j].health -= 20;
+						slog("damaged enemy; enemy health: %i", entity_manager.entity_list[j].health);
+					}
+				}
+				else if (entity_manager.entity_list[i].attackFrame > 10) entity_manager.entity_list[j].attackedThisSwing = 0;
+			}
+			if (entity_manager.entity_list[i].maxAABB.x >= entity_manager.entity_list[j].minAABB.x &&
+				entity_manager.entity_list[i].maxAABB.y >= entity_manager.entity_list[j].minAABB.y &&
+				entity_manager.entity_list[i].maxAABB.z >= entity_manager.entity_list[j].minAABB.z &&
+				entity_manager.entity_list[i].minAABB.x <= entity_manager.entity_list[j].maxAABB.x &&
+				entity_manager.entity_list[i].minAABB.y <= entity_manager.entity_list[j].maxAABB.y &&
+				entity_manager.entity_list[i].minAABB.z <= entity_manager.entity_list[j].maxAABB.z)
+			{
+				//slog("hit entities %i, %i", i, j);
+				//slog("i max AABB x, y, z: %f, %f, %f, min AABB x, y, z: %f, %f, %f", entity_manager.entity_list[i].maxAABB.x, entity_manager.entity_list[i].maxAABB.y, entity_manager.entity_list[i].maxAABB.z, entity_manager.entity_list[i].minAABB.x, entity_manager.entity_list[i].minAABB.y, entity_manager.entity_list[i].minAABB.z);
+				//slog("j max AABB x, y, z: %f, %f, %f, min AABB x, y, z: %f, %f, %f", entity_manager.entity_list[j].maxAABB.x, entity_manager.entity_list[j].maxAABB.y, entity_manager.entity_list[j].maxAABB.z, entity_manager.entity_list[j].minAABB.x, entity_manager.entity_list[j].minAABB.y, entity_manager.entity_list[j].minAABB.z);
+
+				if (!entity_manager.entity_list[i].isStatic) {
+					//entity_manager.entity_list[i].futurePosition.x = entity_manager.entity_list[i].position.x - (1 * cos(entity_manager.entity_list[i].rotation.z));
+					//entity_manager.entity_list[i].futurePosition.y = entity_manager.entity_list[i].position.y - (1 * sin(entity_manager.entity_list[i].rotation.z));
+					//entity_manager.entity_list[i].futurePosition.z = entity_manager.entity_list[i].position.z;
+				}
+
+				//entity_manager.entity_list[i].position.x -= entity_manager.entity_list[i].velocity.x * (0.10 * sin(entity_manager.entity_list[i].rotation.z));
+				//entity_manager.entity_list[i].position.y += entity_manager.entity_list[i].velocity.y * (0.10 * cos(entity_manager.entity_list[i].rotation.z));
+				//entity_manager.entity_list[i].position.z;
+			}
+			else {
+				entity_manager.entity_list[i].position.x = entity_manager.entity_list[i].futurePosition.x;
+				entity_manager.entity_list[i].position.y = entity_manager.entity_list[i].futurePosition.y;
+				entity_manager.entity_list[i].position.z = entity_manager.entity_list[i].futurePosition.z;
+			}
+		}
 	}
 }

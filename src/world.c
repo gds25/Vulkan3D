@@ -59,6 +59,8 @@ World* world_load(char* filename)
         slog("world data (%s) has no model", filename);
     }
     sj_free(json);
+
+   // cube_new(vector3d(0, 0, 0), 0);
     return w;
 }
 

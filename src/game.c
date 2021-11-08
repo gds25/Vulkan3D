@@ -14,6 +14,8 @@
 #include "entity.h"
 #include "agumon.h"
 #include "player.h"
+#include "monster.h"
+#include "cube.h"
 #include "world.h"
 
 int main(int argc,char *argv[])
@@ -76,9 +78,11 @@ int main(int argc,char *argv[])
 
     gf3d_camera_set_scale(vector3d(1, 1, 1));
 
-    player_new(vector3d(0, 0, 10));
+    player_new(vector3d(-100, -100, 0));
 
-    monster_new(vector3d(0, 100, 10));
+    monster_new(vector3d(100, 100, 0));
+
+    cube_new(vector3d(0, 0, 0), 0);
 
     while(!done)
     {
@@ -101,6 +105,7 @@ int main(int argc,char *argv[])
         */
 
         entity_think_all();
+        check_collisions();
         entity_update_all();
 
         // configure render command for graphics command pool

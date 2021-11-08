@@ -12,23 +12,27 @@ static Entity player = {0};
 //      : animate monster attacks (models are in folder)
 //      : add long sword and double dagger animations/hitboxes
 
+void player_get_aabb(Entity* self) {
+    self->maxAABB.x = self->futurePosition.x + 3; //-sin(self->rotation.z);
+    self->maxAABB.y = self->futurePosition.y + 3; //+cos(self->rotation.z);
+    self->maxAABB.z = self->futurePosition.z + 6;
 
-void model_list_init(Entity* self, Uint32 max) {
-    //self->modelList_attack = gfc_allocate_array(sizeof(Model*), max);
-    if (self->modelList_attack == NULL) {
-        //slog("Model system initialization error: cannot allocate 0 entities.");
-        return;
-    }
-    for (int i = 0; i < max; i++) {
-        TextLine modelName;
-        snprintf(modelName, GFCLINELEN, "sword_shield_attack_%i", i);
-        slog(modelName);
-       // Model modelInsert = gf3d_model_load(modelName);
-        //memcpy(&self->modelList_attack[i], gf3d_model_load(modelName), sizeof(Model*));
-        self->modelList_attack[i] = gf3d_model_load(modelName);
-        slog("model: %i", self->modelList_attack[i]);
-    }
+    self->minAABB.x = self->futurePosition.x - 3; // +sin(self->rotation.z);
+    self->minAABB.y = self->futurePosition.y - 3; // 6 - cos(self->rotation.z);
+    self->minAABB.z = self->futurePosition.z;
 }
+
+void sword_get_aabb(Entity* self) {
+    self->maxWeaponAABB.x = self->position.x - 3 * sin(self->rotation.z); //-sin(self->rotation.z);
+    self->maxWeaponAABB.y = self->position.y + 3 * cos(self->rotation.z); //+cos(self->rotation.z);
+    self->maxWeaponAABB.z = self->position.z + 3;
+
+    self->minWeaponAABB.x = self->position.x; // +sin(self->rotation.z);
+    self->minWeaponAABB.y = self->position.y; // 6 - cos(self->rotation.z);
+    self->minWeaponAABB.z = self->position.z;
+}
+
+
 
 Entity* player_new(Vector3D position)
 {
@@ -41,31 +45,37 @@ Entity* player_new(Vector3D position)
         return NULL;
     }
 
-    ent->idleModel = gf3d_model_load("cube");
-    slog("idle model: %i", ent->idleModel);
+    ent->isPlayer = 1;
+
+    ent->idleModel = gf3d_model_load("playermodel");
+    //slog("idle model: %i", ent->idleModel);
     ent->model = ent->idleModel;
-    gfc_matrix_scalar(ent->modelMat, .1);
+    //gfc_matrix_scalar(ent->modelMat, .1);
    // gfc_matrix_rotate(ent->modelMat, ent->modelMat, 90, vector3d(1, 0, 0));
     ent->think = player_think;
     ent->update = player_update;
     vector3d_copy(ent->position, position);
 
-    model_list_init(ent, 15);
+    model_list_init(ent, 15, ent->modelList_attack, "sword_shield_attack_%i");
    // ent->model = ent->modelList_attack[0];
     //ent->attackModel = gf3d_model_load("sword_shield_attack_5");
    // ent->attackModel2 = gf3d_model_load("sword_shield_attack_10");
 
-    slog("circumference = %f", 2*M_PI*100);
+    //slog("circumference = %f", 2*M_PI*100);
     ent->rotation.z= M_PI/2;
     //ent->rotation.x= -M_PI/2;
-    slog("position x = %f, position y = %f, position z = % f", ent->position.x,ent->position.y,ent->position.z);
-    slog("rotation z = %f", ent->rotation.z);
+    //slog("position x = %f, position y = %f, position z = % f", ent->position.x,ent->position.y,ent->position.z);
+   // slog("rotation z = %f", ent->rotation.z);
 
     ent->cameraPosition.x = ent->position.x;
-    ent->cameraPosition.y = ent->position.y - 100;
+    ent->cameraPosition.y = ent->position.y - 30;
     //self->cameraPosition.x = self->position.x;
     //self->cameraPosition.y = self->position.y - 100;
-    ent->cameraPosition.z = ent->position.z + 50;
+    ent->cameraPosition.z = ent->position.z + 10;
+
+    ent->futurePosition.x = ent->position.x;
+    ent->futurePosition.y = ent->position.y;
+    ent->futurePosition.z = ent->position.z;
 
    // ent->acceleration.z = 10;
     ent->isJumping = 0;
@@ -78,6 +88,8 @@ Entity* player_new(Vector3D position)
 
     ent->velocity.x = 1;
     ent->velocity.y = 1;
+
+    player_get_aabb(ent);
    // gf3d_camera_look_at(ent->cameraPosition, ent->position, vector3d(0, 0, 1));
     gfc_matrix_rotate(ent->modelMat, ent->modelMat, M_PI, vector3d(0, 1, 0)); 
     gfc_matrix_rotate(ent->modelMat, ent->modelMat, M_PI, vector3d(1, 0, 0));
@@ -90,34 +102,37 @@ void player_think(Entity* self)
     keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
 
     if (keys[SDL_SCANCODE_W] && self->isIdle) {
-        self->position.y += self->velocity.y * (0.10 * cos(self->rotation.z));
-        self->position.x -= self->velocity.x * (0.10 * sin(self->rotation.z));
-        slog("position x = %f; position y = %f", self->position.x, self->position.y); 
-        
+        //slog("here");
+        self->futurePosition.y += self->velocity.y * (0.010 * cos(self->rotation.z));
+        self->futurePosition.x -= self->velocity.x * (0.010 * sin(self->rotation.z));
+        //slog("position x = %f; position y = %f", self->position.x, self->position.y); 
+        //slog("future position x = % f; future position y = % f, future position z = % f", self->futurePosition.x, self->futurePosition.y, self->futurePosition.z);
+
     }
     if (keys[SDL_SCANCODE_S] && self->isIdle) {
-        self->position.y -= self->velocity.y *(0.10 * cos(self->rotation.z)); 
-        self->position.x += self->velocity.x *(0.10 * sin(self->rotation.z));
+        self->futurePosition.y -= self->velocity.y *(0.010 * cos(self->rotation.z));
+        self->futurePosition.x += self->velocity.x *(0.010 * sin(self->rotation.z));
         //slog("position x = % f; position y = % f", self->position.x, self->position.y); 
         //gfc_matrix_rotate(self->modelMat, self->modelMat, self->rotation.z, vector3d(0, 0, 1));
     }
     if (keys[SDL_SCANCODE_A] && self->isIdle) {
-        self->position.y -= self->velocity.y * (0.10 * sin(self->rotation.z));
-        self->position.x -= self->velocity.x * (0.10 * cos(self->rotation.z));
+        self->futurePosition.y -= self->velocity.y * (0.010 * sin(self->rotation.z));
+        self->futurePosition.x -= self->velocity.x * (0.010 * cos(self->rotation.z));
        // slog("position x = %f; position y = %f", self->position.x, self->position.y);
     }
     if (keys[SDL_SCANCODE_D] && self->isIdle) {
-        self->position.y += self->velocity.y * (0.10 * sin(self->rotation.z));
-        self->position.x += self->velocity.x * (0.10 * cos(self->rotation.z));
+        self->futurePosition.y += self->velocity.y * (0.010 * sin(self->rotation.z));
+        self->futurePosition.x += self->velocity.x * (0.010 * cos(self->rotation.z));
     }
-    if (keys[SDL_SCANCODE_SPACE]&& self->isIdle) {
+    if (keys[SDL_SCANCODE_SPACE] && !self->isJumping) {
         self->isJumping = 1;
-        self->isIdle = 0;
+        //self->isIdle = 0;
         self->lastJumpTime = SDL_GetTicks();
     }
     if (keys[SDL_SCANCODE_Z] && self->isIdle) {
         self->isAttacking = 1;
         self->isIdle = 0;
+        self->lastJumpTime = SDL_GetTicks();
     }
 
     if (keys[SDL_SCANCODE_UP])self->rotation.x += 0.0010;
@@ -160,18 +175,10 @@ void player_think(Entity* self)
     if (self->isJumping)player_jump(self);
     if (self->isAttacking) {
         //("attackFrame: %i", self->attackFrame);
-        self->model = self->modelList_attack[self->attackFrame];
+        player_attack(self);
 
         //slog("here");
         //player_attack(self, self->modelList_attack, self->attackFrame);
-        self->attackFrame++;
-        if (self->attackFrame > 14) {
-            self->attackFrame = 0;
-            self->isIdle = 1;
-            self->isAttacking = 0;
-            //self->model = gf3d_model_load("playermodel");
-            //gf3d_model_free(self->attackModel);
-        }
     }
     else {
         self->model = self->idleModel;
@@ -203,6 +210,12 @@ void player_think(Entity* self)
 
    // SDL_Log("x and y of mouse: %i, %i", x, y);
    // slog("in player think");
+    player_get_aabb(self);
+
+    //slog("PLAYER max AABB x, y, z: %f, %f, %f, min AABB x, y, z: %f, %f, %f", self->maxAABB.x, self->maxAABB.y, self->maxAABB.z, self->minAABB.x, self->minAABB.y, self->minAABB.z);
+
+    //slog("position x = %f; position y = %f", self->position.x, self->position.y);
+
     self->rotation.z = -(2*x)/(1200/M_PI);
     //self->rotation.x = (-(2 * y) / (700 / M_PI));
       //  MAX(M_PI/3, (MIN((2*M_PI/3), (-(2 * y) / (700 / M_PI)))));
@@ -214,11 +227,13 @@ void player_think(Entity* self)
 void player_update(Entity* self)
 {
     if (!self)return;
-    self->cameraPosition.x = self->position.x + (100*sin(self->rotation.z));
-    self->cameraPosition.y = self->position.y - (100*cos(self->rotation.z));
+    //slog("position x = % f; position y = % f, position z = % f", self->position.x, self->position.y, self->position.z);
+    //slog("future position x = % f; future position y = % f, future position z = % f", self->futurePosition.x, self->futurePosition.y, self->futurePosition.z);
+    self->cameraPosition.x = self->position.x + (40*sin(self->rotation.z));
+    self->cameraPosition.y = self->position.y - (40*cos(self->rotation.z));
     //self->cameraPosition.x = self->position.x;
     //self->cameraPosition.y = self->position.y - 100;
-    self->cameraPosition.z = self->position.z + 20; // (100 * sin(self->rotation.x));
+    self->cameraPosition.z = self->position.z + 10; // (100 * sin(self->rotation.x));
 
 
     gf3d_camera_set_position(self->cameraPosition);
@@ -239,24 +254,40 @@ void player_update(Entity* self)
 void player_jump(Entity* self) {
     self->jumpTime = SDL_GetTicks();
     
-    if (self->jumpTime - self->lastJumpTime < 1400) {
-        if (self->jumpTime - self->lastJumpTime < 700) {
-            self->position.z += 0.05;
+    if (self->jumpTime - self->lastJumpTime < 1000) {
+        if (self->jumpTime - self->lastJumpTime < 500) {
+            self->futurePosition.z += 0.005;
         }
-        else self->position.z -= 0.05;
+        else self->futurePosition.z -= 0.005;
     }
     else {
         self->position.z = 0.0;
         self->isJumping = 0;
-        self->isIdle = 1;
+        //self->isIdle = 1;
     }
     //isJumping = 0;
 }
 
-void player_attack(Entity *self, Uint8 attackFrame) {
+void player_attack(Entity *self) {
     //slog("attackFrame: %i", attackFrame);
-
-     self->model = self->modelList_attack[attackFrame];
+    //slog("PLAYER max AABB x, y, z: %f, %f, %f, min AABB x, y, z: %f, %f, %f", self->maxAABB.x, self->maxAABB.y, self->maxAABB.z, self->minAABB.x, self->minAABB.y, self->minAABB.z);
+    //slog("SWORD max AABB x, y, z: %f, %f, %f, min AABB x, y, z: %f, %f, %f", self->maxWeaponAABB.x, self->maxWeaponAABB.y, self->maxWeaponAABB.z, self->minWeaponAABB.x, self->minWeaponAABB.y, self->minWeaponAABB.z);
+     sword_get_aabb(self);
+     self->jumpTime = SDL_GetTicks();
+     if (self->jumpTime - self->lastJumpTime > 50) {
+         if (self->attackFrame > 14) {
+             self->attackFrame = 0;
+             self->isIdle = 1;
+             self->isAttacking = 0;
+             self->model = self->idleModel;
+             //gf3d_model_free(self->attackModel);
+         }
+         else {
+             self->model = self->modelList_attack[self->attackFrame];
+             self->attackFrame++;
+         }
+         self->lastJumpTime = SDL_GetTicks();
+     }
 }
 
 Vector3D get_player_position() {

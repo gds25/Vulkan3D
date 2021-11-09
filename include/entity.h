@@ -8,25 +8,35 @@
 typedef struct Entity_S {
 	Uint8	_inuse;
 	Matrix4 modelMat;
-	Uint8 attackFrame;
-	Model* idleModel;
-	Model* model;
-	Model* modelList_attack[100];
+
+	Uint8 attackFrame; //current attack animation frame to get corresponding model
+	Uint8 framesMax; //total number of  frames for a particular animation 
+
+	Model* idleModel[3]; //to be populated with player models for when not attacking
+
+	Model* model; //current entity model used
+	Model* modelList_attack[20]; //to be populated with attack animation models
+	Model* modelList_attack2[20];
+	Model* modelList_attack3[20];
+
+	Uint8 character; //for use in player file, specifies the weapon you are using
+
 	void (*think)(struct Entity_S* self);
 	void (*update)(struct Entity_S* self);
-	Uint32	health;
+	Uint32	health; //entity stats
 	Uint32  healthRegen;
 	Uint32	mana;
+	Uint32  manaRegen;
 	Uint32  armor;
 	Uint32  damage;
 
-	Vector3D position;
+	Vector3D position; //vectors dealing with position and movement
 	Vector3D futurePosition;
 	Vector3D cameraPosition;
 	Vector3D velocity;
 	Vector3D acceleration;
 
-	Uint8 isJumping;
+	Uint8 isJumping; //entity states
 	Uint8 isAttacking;
 	Uint8 isIdle;
 	Uint8 poweredUp;
@@ -40,19 +50,23 @@ typedef struct Entity_S {
 	Uint32 powerUpTime;
 	Uint32 lastPowerUpTime;
 
-	Vector3D scale;
+	Vector3D scale; 
 	Vector3D rotation;
 
-	Vector3D maxAABB;
+	Vector3D maxAABB; //entity bounding box coordinates
 	Vector3D minAABB;
 
-	Vector3D maxWeaponAABB;
+	Vector3D maxWeaponAABB; //bounding box coordinates for weapons
 	Vector3D minWeaponAABB;
 
 	Uint8 isStatic;
-	Uint8 isPlayer;
-	Uint8 isMonster;
-	Uint8 attackedThisSwing;
+	Uint8 isPlayer; //is entity the player ent
+	Uint8 isMonster; //is entity a monster ent
+
+	Uint8 attackedThisSwing; //check if monster was hit on player attack animation
+	Uint8 hasAttacked; //check if monster hit player on attack anumation
+	Uint8 isFireball; //check if entity is a fireball
+	Uint8 isHealth; //check if entity is a health pack
 
 } Entity;
 
@@ -85,7 +99,7 @@ Entity* entity_new();
 * @brief free previously created entity from memory
 * @param self the entity to be freed
 */
-void entity_free(Entity* self); // , Uint32 bufferFrame);
+void entity_free(Entity* self);
 
 /**
 * @brief free all previously created entities from memory
@@ -93,7 +107,7 @@ void entity_free(Entity* self); // , Uint32 bufferFrame);
 void entity_free_all();
 
 /**
-* @brief free previously created entity from memory
+* @brief draw entity model to the screen
 * @param self the entity to be drawn
 * @param bufferFrame the current rending frame index
 */
@@ -101,8 +115,7 @@ void entity_draw(Entity* self, Uint32 bufferFrame, VkCommandBuffer commandBuffer
 
 
 /**
-* @brief free previously created entity from memory
-* @param self the entity to be freed
+* @brief draw all entity models to screen
 * @param bufferFrame the current rending frame index
 */
 void entity_draw_all(Uint32 bufferFrame, VkCommandBuffer commandBuffer);

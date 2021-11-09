@@ -123,6 +123,12 @@
     <ClInclude Include="..\include\cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\wall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\health.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\gfc\simple_json\src\simple_json.c">
@@ -237,6 +243,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\cube.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\wall.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\health.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

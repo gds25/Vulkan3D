@@ -1,5 +1,5 @@
-#ifndef __FIREBALL_H__
-#define __FIREBALL_H__
+#ifndef __CUBE_H__
+#define __CUBE_H__
 
 #include "entity.h"
 

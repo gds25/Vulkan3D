@@ -16,10 +16,19 @@ Entity* fireball_new(Vector3D position, float rotation);
 * @param self the entity in question
 */
 void fireball_think(Entity* self);
+
+/**
+* @brief update fireball in world space
+* @param self the entity in question
+*/
 void fireball_update(Entity* self);
 
-void fireball_on_hit(Entity* self);
+/**
+ * @brief get bounding box cooridnates of fireball entity
+ * @param the entity in question
+ */
 
+void fireball_get_aabb(Entity* self);
 
 
 #endif

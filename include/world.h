@@ -17,14 +17,24 @@ typedef struct
     List* entityList;       //entities that exist in the world
 }World;
 
+/**
+ * @brief create the game world
+ * @param filename JSON file that stores world info
+ * @return NULL on error, or world entity on success
+ */
 World* world_load(char* filename);
 
+/**
+* @brief draw world model to the screen
+* @param world the world to be drawn
+* @param bufferFrame the current rending frame index
+*/
 void world_draw(World* world, Uint32 bufferFrame, VkCommandBuffer commandBuffer);
 
+/**
+* @brief free world model from memory
+* @param world the world to be freed
+*/
 void world_delete(World* world);
-
-void world_run_updates(World* world);
-
-void world_add_entity(World* world, Entity* entity);
 
 #endif

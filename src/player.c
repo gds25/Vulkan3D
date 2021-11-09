@@ -18,8 +18,8 @@ void player_get_aabb(Entity* self) {
     self->maxAABB.y = self->futurePosition.y + 8; //+cos(self->rotation.z);
     self->maxAABB.z = self->futurePosition.z + 8;
 
-    self->minAABB.x = self->futurePosition.x - 5; // +sin(self->rotation.z);
-    self->minAABB.y = self->futurePosition.y - 5; // 6 - cos(self->rotation.z);
+    self->minAABB.x = self->futurePosition.x ; // +sin(self->rotation.z);
+    self->minAABB.y = self->futurePosition.y; // 6 - cos(self->rotation.z);
     self->minAABB.z = self->futurePosition.z;
 }
 

@@ -34,6 +34,8 @@ Entity* fireball_new(Vector3D position, float rotation)
     ent->think = fireball_think;
     ent->update = fireball_update;
 
+    vector3d_copy(ent->position, position);
+
     ent->position.y -= 5 * cos(ent->rotation.z);
     ent->position.x += 5 * sin(ent->rotation.z);
     ent->position.z += 5;
@@ -50,7 +52,7 @@ void fireball_think(Entity* self) {
     self->futurePosition.x -= (0.10 * sin(self->rotation.z));
 
     fireball_get_aabb(self);
-    slog("position x = %f; position y = %f", self->position.x, self->position.y); 
+    //slog("position x = %f; position y = %f", self->position.x, self->position.y); 
 }
 void fireball_update(Entity* self) {
     //slog("here");

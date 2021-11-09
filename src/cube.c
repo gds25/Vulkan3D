@@ -39,11 +39,11 @@ Entity* cube_new(Vector3D position, float rotation)
 
 void cube_get_aabb(Entity* self) {
     //slog("CUBE max AABB x, y, z: %f, %f, %f, min AABB x, y, z: %f, %f, %f", self->maxAABB.x, self->maxAABB.y, self->maxAABB.z, self->minAABB.x, self->minAABB.y, self->minAABB.z);
-    self->maxAABB.x = self->position.x + 10; //-sin(self->rotation.z);
-    self->maxAABB.y = self->position.y + 20; //+cos(self->rotation.z);
+    self->maxAABB.x = self->position.x + 15; //-sin(self->rotation.z);
+    self->maxAABB.y = self->position.y + 25; //+cos(self->rotation.z);
     self->maxAABB.z = self->position.z + 20;
 
-    self->minAABB.x = self->position.x-10; // +sin(self->rotation.z);
-    self->minAABB.y = self->position.y; // 6 - cos(self->rotation.z);
+    self->minAABB.x = self->position.x - 5; // +sin(self->rotation.z);
+    self->minAABB.y = self->position.y + 5; // 6 - cos(self->rotation.z);
     self->minAABB.z = self->position.z;
 }

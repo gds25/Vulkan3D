@@ -103,18 +103,15 @@ void monster_chase(Entity* self, Vector3D playerPos) {
     //self->futurePosition.x -= playerPos.x;
     //self->futurePosition.y -= playerPos.y;
 
-    self->futurePosition.x += (0.013 * sin(self->rotation.z));
-    self->futurePosition.y -= (0.013 * cos(self->rotation.z));
+    self->futurePosition.x -= (0.005 * sin(self->rotation.z));
+    self->futurePosition.y += (0.005 * cos(self->rotation.z));
 }
 
 void monster_pace(Entity* self) {
-    self->currentTime = SDL_GetTicks();
-    if (self->currentTime > self->lastTime + 1000) {
-        self->lastTime = self->currentTime;
-        self->rotation.z = (rand() / RAND_MAX) * (2/M_PI);
-    }
-    self->futurePosition.x += (0.005 * sin(self->rotation.z));
-    self->futurePosition.y -= (0.005 * cos(self->rotation.z));
+    self->rotation.z += 0.0001;
+   
+    self->futurePosition.x -= (0.005 * sin(self->rotation.z));
+    self->futurePosition.y += (0.005 * cos(self->rotation.z));
 }
 
 void monster_get_aabb(Entity* self) {
@@ -122,9 +119,9 @@ void monster_get_aabb(Entity* self) {
     self->maxAABB.y = self->futurePosition.y + 8; //+cos(self->rotation.z);
     self->maxAABB.z = self->futurePosition.z + 8;
 
-    self->minAABB.x = self->futurePosition.x; // +sin(self->rotation.z);
-    self->minAABB.y = self->futurePosition.y; // 6 - cos(self->rotation.z);
-    self->minAABB.z = self->futurePosition.z;
+    self->minAABB.x = self->futurePosition.x-8; // +sin(self->rotation.z);
+    self->minAABB.y = self->futurePosition.y-8; // 6 - cos(self->rotation.z);
+    self->minAABB.z = self->futurePosition.z-8;
 }
 
 void attack_get_aabb(Entity* self) {
@@ -140,12 +137,14 @@ void attack_get_aabb(Entity* self) {
 void monster_attack(Entity* self) {
     attack_get_aabb(self);
     //slog("attackFrame: %i", attackFrame);
+    //slog("has attacked: %i", self->hasAttacked);
     self->jumpTime = SDL_GetTicks();
     if (self->jumpTime - self->lastJumpTime > 50) {
         if (self->attackFrame > 15) {
             self->attackFrame = 0;
             self->isIdle = 1;
             self->isAttacking = 0;
+            self->hasAttacked = 0;
             //self->model = self->idleModel;
             //gf3d_model_free(self->attackModel);
         }

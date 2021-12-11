@@ -10,6 +10,7 @@
 #include "gf3d_model.h"
 #include "gf3d_camera.h"
 #include "gf3d_texture.h"
+#include "gf3d_sprite.h"
 
 #include "entity.h"
 #include "agumon.h"
@@ -26,12 +27,14 @@ int main(int argc,char *argv[])
     int a;
     Uint8 validate = 0;
     const Uint8 * keys;
-    Uint32 bufferFrame = 0;
-    VkCommandBuffer commandBuffer;
     Model *model;
     Matrix4 modelMat;
     Model *model2;
     Matrix4 modelMat2;
+
+    Sprite* mouse = NULL;
+    int mousex, mousey;
+    float mouseFrame = 0;
 
     World* w;
     
@@ -62,6 +65,8 @@ int main(int argc,char *argv[])
     slog("gf3d main loop begin");
 
 	slog_sync();
+
+    mouse = gf3d_sprite_load("images/pointer.png", 32, 32, 16);
 
     w = world_load("config/world.json");
     
@@ -101,6 +106,12 @@ int main(int argc,char *argv[])
     {
         SDL_PumpEvents();   // update SDL's internal event structures
         keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
+
+        SDL_GetMouseState(&mousex, &mousey);
+
+        mouseFrame += 0.01;
+        if (mouseFrame >= 16)mouseFrame = 0;
+
         //update game things here
        
         /*
@@ -127,23 +138,21 @@ int main(int argc,char *argv[])
         //gf3d_camera_update_view();
         gf3d_camera_get_view_mat4(gf3d_vgraphics_get_view_matrix());
 
-        bufferFrame = gf3d_vgraphics_render_begin();
-        gf3d_pipeline_reset_frame(gf3d_vgraphics_get_graphics_pipeline(),bufferFrame);
-            commandBuffer = gf3d_command_rendering_begin(bufferFrame);
-
+            gf3d_vgraphics_render_start();
             //slog("before world draw");
-                world_draw(w, bufferFrame, commandBuffer);
+                world_draw(w);
 
                 //slog("before draw entites");
             // entity_draw_all would go here instead of model_draw //parameters bufferframe, commandbuffer
-                entity_draw_all(bufferFrame, commandBuffer);
+                entity_draw_all();
                 
                 //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat);
                 //gf3d_model_draw(model2,bufferFrame,commandBuffer,modelMat2);
                 //slog("after draw entities");
-            gf3d_command_rendering_end(commandBuffer);
+
+                gf3d_sprite_draw(mouse, vector2d(mousex, mousey), vector2d(1, 1), (Uint32)mouseFrame);
             
-        gf3d_vgraphics_render_end(bufferFrame);
+        gf3d_vgraphics_render_end();
 
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
     }    

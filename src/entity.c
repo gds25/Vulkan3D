@@ -60,18 +60,18 @@ void entity_free_all() {
 	}
 }
 
-void entity_draw(Entity* self, Uint32 bufferFrame, VkCommandBuffer commandBuffer) {
+void entity_draw(Entity* self) {
 	if (!self)
 		return;
 	//slog("model: %i", self->model);
-	gf3d_model_draw(self->model, bufferFrame, commandBuffer, self->modelMat);
+	gf3d_model_draw(self->model, self->modelMat);
 }
 
-void entity_draw_all(Uint32 bufferFrame, VkCommandBuffer commandBuffer) {
+void entity_draw_all() {
 	for (int i = 0; i < entity_manager.entity_count; i++) {
 		if (!entity_manager.entity_list[i]._inuse)
 			continue;
-		entity_draw(&entity_manager.entity_list[i], bufferFrame, commandBuffer);
+		entity_draw(&entity_manager.entity_list[i]);
 	}
 }
 

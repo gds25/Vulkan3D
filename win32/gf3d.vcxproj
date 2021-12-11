@@ -113,6 +113,7 @@
     <ClInclude Include="..\include\gf3d_model.h" />
     <ClInclude Include="..\include\gf3d_pipeline.h" />
     <ClInclude Include="..\include\gf3d_shaders.h" />
+    <ClInclude Include="..\include\gf3d_sprite.h" />
     <ClInclude Include="..\include\gf3d_swapchain.h" />
     <ClInclude Include="..\include\gf3d_validation.h" />
     <ClInclude Include="..\include\gf3d_vgraphics.h" />
@@ -163,6 +164,7 @@
     <ClCompile Include="..\src\monster.c" />
     <ClCompile Include="..\src\player.c" />
     <ClCompile Include="..\src\spell.c" />
+    <ClCompile Include="..\src\sprite.c" />
     <ClCompile Include="..\src\wall.c" />
     <ClCompile Include="..\src\world.c" />
   </ItemGroup>

@@ -29,7 +29,7 @@ World* world_load(char* filename);
 * @param world the world to be drawn
 * @param bufferFrame the current rending frame index
 */
-void world_draw(World* world, Uint32 bufferFrame, VkCommandBuffer commandBuffer);
+void world_draw(World* world);
 
 /**
 * @brief free world model from memory

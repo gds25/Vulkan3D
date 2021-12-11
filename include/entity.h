@@ -111,14 +111,14 @@ void entity_free_all();
 * @param self the entity to be drawn
 * @param bufferFrame the current rending frame index
 */
-void entity_draw(Entity* self, Uint32 bufferFrame, VkCommandBuffer commandBuffer);
+void entity_draw(Entity* self);
 
 
 /**
 * @brief draw all entity models to screen
 * @param bufferFrame the current rending frame index
 */
-void entity_draw_all(Uint32 bufferFrame, VkCommandBuffer commandBuffer);
+void entity_draw_all();
 
 /**
 * @brief entity logic

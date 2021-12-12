@@ -28,7 +28,7 @@ void health_regen(Entity* self) {
 void mana_regen(Entity* self) {
 	self->manaRegen = 1;
 	//self->mana -= 25;
-	self->mana = MAX(0, self->health-10);
+	self->health = MAX(0, self->health-10);
 	slog("Mana will regenerate for 5 seconds.\nHealth after spell: %i", self->health);
 }
 void defense_buff(Entity* self) {

@@ -33,11 +33,14 @@ int main(int argc,char *argv[])
     Matrix4 modelMat2;
 
     Sprite* mouse = NULL;
-    Sprite* mainMenu = NULL;
     int mousex, mousey;
     float mouseFrame = 0;
 
-
+    Sprite* mainMenu = NULL;
+    Sprite* healthbar = NULL;
+    Sprite* manabar = NULL; 
+    Sprite* healthbg = NULL;
+    Sprite* manabg = NULL;
     World* w;
 
     Entity* player;
@@ -72,6 +75,10 @@ int main(int argc,char *argv[])
 
     mouse = gf3d_sprite_load("images/pointer.png", 32, 32, 16);
     mainMenu = gf3d_sprite_load("images/mainmenu.png", -1, -1, 1);
+    healthbar = gf3d_sprite_load("images/healthbar.png", -1, -1, 1);
+    manabar = gf3d_sprite_load("images/manabar.png", -1, -1, 1);
+    healthbg = gf3d_sprite_load("images/healthbg.png", -1, -1, 1);
+    manabg = gf3d_sprite_load("images/manabg.png", -1, -1, 1);
     //gf3d_sprite_draw(mouse, vector2d(100, 100), vector2d(1, 1), (Uint32)mouseFrame);
     //gf3d_sprite_draw(mainMenu, vector2d(0, 0), vector2d(1, 1), 0);
 
@@ -155,6 +162,17 @@ int main(int argc,char *argv[])
                 //slog("before draw entites");
             // entity_draw_all would go here instead of model_draw //parameters bufferframe, commandbuffer
                 entity_draw_all();
+                
+
+                
+                //gf3d_sprite_draw(healthbg, vector2d(900, 75), vector2d(1, 1), 0); 
+                //gf3d_sprite_draw(healthbg, vector2d(900, 75), vector2d(1, 1), 0); 
+                gf3d_sprite_draw(manabg, vector2d(900, 125), vector2d(1, 1), 0);
+                gf3d_sprite_draw(healthbg, vector2d(900, 75), vector2d(1, 1), 0);
+                gf3d_sprite_draw(healthbar, vector2d(1200 - (3*player->health), 75), vector2d(1, 1), 0);
+                gf3d_sprite_draw(manabar, vector2d(1200 - (3*player->mana), 125), vector2d(1, 1), 0);
+
+
             }
                 
                 //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat);

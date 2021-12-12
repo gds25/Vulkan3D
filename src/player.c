@@ -112,6 +112,10 @@ void player_think(Entity* self)
     const Uint8* keys;
     keys = SDL_GetKeyboardState(NULL); // get the keyboard state for this frame
 
+    int mousex, mousey;
+
+    SDL_GetMouseState(&mousex, &mousey);
+
     if (keys[SDL_SCANCODE_P]) {
         //slog("paused");
         self->isPaused = 1;
@@ -150,7 +154,7 @@ void player_think(Entity* self)
             //self->isIdle = 0;
             self->lastTime = SDL_GetTicks();
         }
-        if (keys[SDL_SCANCODE_Z] && self->isIdle) {
+        if ((keys[SDL_SCANCODE_Z] && self->isIdle)) {
             self->isAttacking = 1;
             self->isIdle = 0;
             self->lastTime = SDL_GetTicks();
@@ -254,8 +258,6 @@ void player_think(Entity* self)
 
         set_player_position(self);
 
-        int x, y;
-        SDL_GetMouseState(&x, &y);
 
         // SDL_Log("x and y of mouse: %i, %i", x, y);
         // slog("in player think");
@@ -265,7 +267,7 @@ void player_think(Entity* self)
 
         //slog("position x = %f; position y = %f", self->position.x, self->position.y);
 
-        self->rotation.z = -(2 * x) / (1200 / M_PI);
+        self->rotation.z = -(2 * mousex) / (1200 / M_PI);
         //self->rotation.x = (-(2 * y) / (700 / M_PI));
           //  MAX(M_PI/3, (MIN((2*M_PI/3), (-(2 * y) / (700 / M_PI)))));
 
@@ -275,7 +277,6 @@ void player_think(Entity* self)
 
     player_set_pause_state(self);
 
-    
 }
 
 void player_update(Entity* self)

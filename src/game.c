@@ -166,6 +166,18 @@ int main(int argc,char *argv[])
                 gf3d_sprite_draw(mouse, vector2d(mousex, mousey), vector2d(1, 1), (Uint32)mouseFrame);
         gf3d_vgraphics_render_end();
 
+        if (player->isPaused & SDL_GetMouseState(&mousex, &mousey) & SDL_BUTTON_LMASK != 0
+            & mousex >= 315 & mousex <= 871 & mousey >= 269 & mousey <= 575) {
+
+            if (mousey <= 395) {
+                player->isPaused = 0;
+            }
+            else if (mousey >= 450) {
+                done = 1;
+            }
+            slog("mouse click: x = %i, y = %i", mousex, mousey);
+        }
+
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
     }    
 
@@ -176,6 +188,6 @@ int main(int argc,char *argv[])
     slog("gf3d program end");
     slog_sync();
     return 0;
-}
+} 
 
 /*eol@eof*/

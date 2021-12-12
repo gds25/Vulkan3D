@@ -243,8 +243,8 @@ void gf3d_sprite_draw(Sprite* sprite, Vector2D position, Vector2D scale, Uint32 
     VkCommandBuffer commandBuffer;
     VkExtent2D extent = gf3d_vgraphics_get_view_extent();
 
-    slog("sprite scale %i, %i", scale.x, scale.y);
-    slog("sprite position %i, %i", position.x, position.y);
+    //slog("sprite scale %i, %i", scale.x, scale.y);
+    //slog("sprite position %i, %i", position.x, position.y);
     if (!sprite)
     {
         slog("cannot render a NULL sprite");

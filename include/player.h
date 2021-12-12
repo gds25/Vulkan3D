@@ -50,12 +50,24 @@ void set_player_position(Entity* self);
  * @brief get bounding box cooridnates of okayer entity
  * @param self the player entity
  */
-void player_get_aabb(Entity* self);
+void player_set_aabb(Entity* self);
 
 /**
  * @brief get bounding box cooridnates of player weapon
  * @param self the player entity
  */
-void sword_get_aabb(Entity* self);
+void sword_set_aabb(Entity* self);
+
+/**
+ * @brief check to see if game is paused
+ * @param self the player entity
+ */
+Uint8 player_get_pause_state(Entity* self);
+
+/**
+* @brief set pause state to see whether to draw main menu
+* @param self the player entity
+*/
+void player_set_pause_state(Entity* self);
 
 #endif

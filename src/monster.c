@@ -88,6 +88,7 @@ void monster_update(Entity* self)
     if (!self)return;
     gfc_matrix_make_translation(self->modelMat, self->position);
     gfc_matrix_rotate(self->modelMat, self->modelMat, (2*M_PI)-self->rotation.z, vector3d(0, 0, 1));
+    //gfc_matrix_scale(self->modelMat, vector3d(2, 2, 2));
 
 }
 

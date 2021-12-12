@@ -28,16 +28,16 @@ typedef struct
 
 typedef struct
 {
-    Sprite* sprite_list;      /**<pre-allocated space for sprites*/
+    Sprite          *sprite_list;      /**<pre-allocated space for sprites*/
     Uint32          max_sprites;      /**<maximum concurrent sprites supported*/
     Uint32          chain_length;     /**<length of swap chain*/
     VkDevice        device;           /**<logical vulkan device*/
-    Pipeline* pipe;             /**<the pipeline associated with sprite rendering*/
+    Pipeline        *pipe;             /**<the pipeline associated with sprite rendering*/
     VkBuffer        faceBuffer;       /**<memory handle for the face buffer (always two faces)*/
     VkDeviceMemory  faceBufferMemory; /**<memory habdle for tge face memory*/
     VkVertexInputAttributeDescription   attributeDescriptions[SPRITE_ATTRIBUTE_COUNT];
     VkVertexInputBindingDescription     bindingDescription;
-    Command* stagingCommandBuffer;
+    Command         *stagingCommandBuffer;
 }SpriteManager;
 
 void gf3d_sprite_update_basic_descriptor_set(Sprite* model, VkDescriptorSet descriptorSet, Uint32 chainIndex, Matrix4 modelMat, Uint32 frame);
@@ -84,7 +84,7 @@ void gf3d_sprite_manager_init(Uint32 max_sprites, Uint32 chain_length, VkDevice 
 
     if (max_sprites == 0)
     {
-        slog("cannot intilizat sprite manager for 0 sprites");
+        slog("cannot initialize sprite manager for 0 sprites");
         return;
     }
     gf3d_sprite.chain_length = chain_length;
@@ -243,6 +243,8 @@ void gf3d_sprite_draw(Sprite* sprite, Vector2D position, Vector2D scale, Uint32 
     VkCommandBuffer commandBuffer;
     VkExtent2D extent = gf3d_vgraphics_get_view_extent();
 
+    slog("sprite scale %i, %i", scale.x, scale.y);
+    slog("sprite position %i, %i", position.x, position.y);
     if (!sprite)
     {
         slog("cannot render a NULL sprite");

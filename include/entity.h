@@ -62,6 +62,7 @@ typedef struct Entity_S {
 	Uint8 isStatic;
 	Uint8 isPlayer; //is entity the player ent
 	Uint8 isMonster; //is entity a monster ent
+	Uint8 isPaused;
 
 	Uint8 attackedThisSwing; //check if monster was hit on player attack animation
 	Uint8 hasAttacked; //check if monster hit player on attack anumation

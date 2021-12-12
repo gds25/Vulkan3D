@@ -33,10 +33,14 @@ int main(int argc,char *argv[])
     Matrix4 modelMat2;
 
     Sprite* mouse = NULL;
+    Sprite* mainMenu = NULL;
     int mousex, mousey;
     float mouseFrame = 0;
 
+
     World* w;
+
+    Entity* player;
     
     for (a = 1; a < argc;a++)
     {
@@ -67,8 +71,12 @@ int main(int argc,char *argv[])
 	slog_sync();
 
     mouse = gf3d_sprite_load("images/pointer.png", 32, 32, 16);
+    mainMenu = gf3d_sprite_load("images/mainmenu.png", -1, -1, 1);
+    //gf3d_sprite_draw(mouse, vector2d(100, 100), vector2d(1, 1), (Uint32)mouseFrame);
+    //gf3d_sprite_draw(mainMenu, vector2d(0, 0), vector2d(1, 1), 0);
 
     w = world_load("config/world.json");
+
     
     //Entity *agumon = agumon_new();
 
@@ -85,7 +93,7 @@ int main(int argc,char *argv[])
 
     gf3d_camera_set_scale(vector3d(1, 1, 1));
 
-    player_new(vector3d(0, 0, 0));
+    player = player_new(vector3d(0, 0, 0));
 
     monster_new(vector3d(50, 50, 0));
 
@@ -131,6 +139,7 @@ int main(int argc,char *argv[])
         entity_think_all();
         check_collisions();
         entity_update_all();
+        
 
         // configure render command for graphics command pool
         // for each mesh, get a command and configure it from the pool
@@ -140,18 +149,21 @@ int main(int argc,char *argv[])
 
             gf3d_vgraphics_render_start();
             //slog("before world draw");
+            if (!player->isPaused) {
                 world_draw(w);
 
                 //slog("before draw entites");
             // entity_draw_all would go here instead of model_draw //parameters bufferframe, commandbuffer
                 entity_draw_all();
+            }
                 
                 //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat);
                 //gf3d_model_draw(model2,bufferFrame,commandBuffer,modelMat2);
                 //slog("after draw entities");
-
+            else {
+                gf3d_sprite_draw(mainMenu, vector2d(0, 0), vector2d(1, 1), 0);
+            }
                 gf3d_sprite_draw(mouse, vector2d(mousex, mousey), vector2d(1, 1), (Uint32)mouseFrame);
-            
         gf3d_vgraphics_render_end();
 
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition

@@ -1,4 +1,5 @@
 #include "simple_logger.h"
+#include "simple_json.h"
 #include "gfc_types.h"
 
 #include "gf3d_camera.h"
@@ -13,7 +14,7 @@ void monster_die(Entity* self) {
     entity_free(self);
 }
 
-Entity* monster_new(Vector3D position)
+Entity* monster_new(Vector3D position, char* filename)
 {
     Entity* ent = NULL;
 
@@ -26,10 +27,51 @@ Entity* monster_new(Vector3D position)
 
     ent->isMonster = 1; 
 
-    ent->idleModel[0] = gf3d_model_load("dino");
+    SJson* json, * pjson;
+    char* modelName = NULL;
+
+    json = sj_load(filename);
+    if (!json)
+    {
+        slog("failed to load json file (%s) for the world data", filename);
+        free(ent);
+        return NULL;
+    }
+    pjson = sj_object_get_value(json, "monster");
+    if (!pjson)
+    {
+        slog("failed to find moster object in %s monster config", filename);
+        free(ent);
+        sj_free(json);
+        return NULL;
+    }
+    modelName = sj_get_string_value(sj_object_get_value(pjson, "model"));
+
+    if (modelName)
+    {
+        ent->idleModel[0] = gf3d_model_load(modelName);
+    }
+    else
+    {
+        slog("monster data (%s) has no model", filename);
+    }
+    modelName = sj_get_string_value(sj_object_get_value(pjson, "modellist"));
+    if (modelName)
+    {
+        model_list_init(ent, 16, ent->modelList_attack, modelName);
+    }
+    else
+    {
+        slog("monster data (%s) has no model", filename);
+    }
+
+    ent->health = sj_get_integer_value(sj_object_get_value(pjson, "health"), NULL);
+    ent->damage = sj_get_integer_value(sj_object_get_value(pjson, "damage"), NULL);
+
+    sj_free(json);
+
     //slog("idle model: %i", ent->idleModel);
-    ent->model = ent->idleModel;
-    model_list_init(ent, 16, ent->modelList_attack, "dino_attack_%i");
+    ent->model = ent->idleModel[0];
     // gfc_matrix_rotate(ent->modelMat, ent->modelMat, 90, vector3d(1, 0, 0));
     ent->think = monster_think;
     ent->update = monster_update;
@@ -43,7 +85,8 @@ Entity* monster_new(Vector3D position)
 
     ent->rotation.z = -M_PI;
 
-    ent->health = 100;
+    //ent->health = 100;
+    //ent->damage = 10;
 
     return ent;
 }

@@ -6,9 +6,10 @@
 /**
  * @brief Create a new monster entity
  * @param position where to spawn the monster at
+ * @param filename JSON file that stores world info
  * @return NULL on error, or an monster entity pointer on success
  */
-Entity* monster_new(Vector3D position);
+Entity* monster_new(Vector3D position, char* filename);
 
 
 /**

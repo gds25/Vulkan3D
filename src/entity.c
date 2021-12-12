@@ -166,7 +166,7 @@ void check_collisions() {
 						entity_manager.entity_list[i].minWeaponAABB.y <= entity_manager.entity_list[j].maxAABB.y &&
 						entity_manager.entity_list[i].minWeaponAABB.z <= entity_manager.entity_list[j].maxAABB.z) {
 						entity_manager.entity_list[j].attackedThisSwing = 1;
-						entity_manager.entity_list[j].health -= 20;
+						entity_manager.entity_list[j].health -= entity_manager.entity_list[i].damage;
 						slog("damaged enemy; enemy health: %i", entity_manager.entity_list[j].health);
 					}
 				}
@@ -181,7 +181,7 @@ void check_collisions() {
 						entity_manager.entity_list[i].minWeaponAABB.y <= entity_manager.entity_list[j].maxAABB.y &&
 						entity_manager.entity_list[i].minWeaponAABB.z <= entity_manager.entity_list[j].maxAABB.z) {
 						entity_manager.entity_list[i].hasAttacked = 1;
-						entity_manager.entity_list[j].health = MAX(1, entity_manager.entity_list[j].health - (10 / entity_manager.entity_list[j].armor));
+						entity_manager.entity_list[j].health = MAX(1, entity_manager.entity_list[j].health - (entity_manager.entity_list[i].damage / entity_manager.entity_list[j].armor));
 
 						slog("you took damage! health is now: %i", entity_manager.entity_list[j].health);
 						/*slog("player pos x, y, z: %f, %f, %f", entity_manager.entity_list[i].position.x, entity_manager.entity_list[i].position.y, entity_manager.entity_list[i].position.z);

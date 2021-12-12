@@ -6,9 +6,10 @@
 /**
  * @brief Create a new player entity
  * @param position where to spawn the player at
+ * @param filename JSON file that stores player info
  * @return NULL on error, or an player entity pointer on success
  */
-Entity* player_new(Vector3D position);
+Entity* player_new(Vector3D position, char* filename);
 
 /**
 * @brief player logic

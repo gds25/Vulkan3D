@@ -1,4 +1,5 @@
 #include "simple_logger.h"
+#include "simple_json.h"
 #include "gfc_types.h"
 
 #include "gf3d_camera.h"
@@ -35,7 +36,7 @@ void sword_set_aabb(Entity* self) {
 
 
 
-Entity* player_new(Vector3D position)
+Entity* player_new(Vector3D position, char* filename)
 {
     Entity* ent = NULL;
     
@@ -48,20 +49,103 @@ Entity* player_new(Vector3D position)
 
     ent->isPlayer = 1;
 
-    ent->idleModel[0] = gf3d_model_load("playermodel");
-    ent->idleModel[1] = gf3d_model_load("playermodel_2");
-    ent->idleModel[2] = gf3d_model_load("playermodel_3");
+    SJson* json, * pjson, * mjson;
+    char* modelName1 = NULL;
+    char* modelName2 = NULL;
+    char* modelName3 = NULL;
+    json = sj_load(filename);
+    if (!json)
+    {
+        slog("failed to load json file (%s) for the world data", filename);
+        free(ent);
+        return NULL;
+    }
+    pjson = sj_object_get_value(json, "player");
+    if (!pjson)
+    {
+        slog("failed to find world object in %s world condig", filename);
+        free(ent);
+        sj_free(json);
+        return NULL;
+    }
+    mjson = sj_object_get_value(pjson, "model");
+    modelName1 = sj_get_string_value(sj_object_get_value(mjson, "model1"));
+    modelName2 = sj_get_string_value(sj_object_get_value(mjson, "model2"));
+    modelName3 = sj_get_string_value(sj_object_get_value(mjson, "model3"));
+
+    if (modelName1)
+    {
+        ent->idleModel[0] = gf3d_model_load(modelName1);
+    }
+    else
+    {
+        slog("player data (%s) has no model", filename);
+    }
+    if (modelName2)
+    {
+        ent->idleModel[1] = gf3d_model_load(modelName2);
+    }
+    else
+    {
+        slog("player data (%s) has no model", filename);
+    }
+    if (modelName3)
+    {
+        ent->idleModel[2] = gf3d_model_load(modelName3);
+    }
+    else
+    {
+        slog("player data (%s) has no model", filename);
+    }
+
+    mjson = sj_object_get_value(pjson, "modellist");
+    modelName1 = sj_get_string_value(sj_object_get_value(mjson, "moveset1"));
+    modelName2 = sj_get_string_value(sj_object_get_value(mjson, "moveset2"));
+    modelName3 = sj_get_string_value(sj_object_get_value(mjson, "moveset3"));
+    
+
+    if (modelName1)
+    {
+        model_list_init(ent, 15, ent->modelList_attack, modelName1);
+    }
+    else
+    {
+        slog("player data (%s) has no model", filename);
+    }
+    if (modelName2)
+    {
+        model_list_init(ent, 13, ent->modelList_attack2, modelName2);
+    }
+    else
+    {
+        slog("player data (%s) has no model", filename);
+    }
+    if (modelName3)
+    {
+        model_list_init(ent, 10, ent->modelList_attack3, modelName3);
+    }
+    else
+    {
+        slog("player data (%s) has no model", filename);
+    }
+
+    ent->health = sj_get_integer_value(sj_object_get_value(pjson, "health"),NULL);
+    ent->mana = sj_get_integer_value(sj_object_get_value(pjson, "mana"),NULL);
+    ent->damage = sj_get_integer_value(sj_object_get_value(pjson, "damage"),NULL);
+    ent->armor = sj_get_integer_value(sj_object_get_value(pjson, "armor"),NULL);
+
+    sj_free(json);
+
+    slog("health %i, mana %i, damage %i, armor %i", ent->health, ent->mana, ent->damage, ent->armor);
+
     //slog("idle model: %i", ent->idleModel);
-    ent->model = ent->idleModel;
+    ent->model = ent->idleModel[0];
     //gfc_matrix_scalar(ent->modelMat, .1);
    // gfc_matrix_rotate(ent->modelMat, ent->modelMat, 90, vector3d(1, 0, 0));
     ent->think = player_think;
     ent->update = player_update;
     vector3d_copy(ent->position, position);
 
-    model_list_init(ent, 15, ent->modelList_attack, "sword_shield_attack_%i");
-    model_list_init(ent, 13, ent->modelList_attack2, "long_sword_attack_%i");
-    model_list_init(ent, 10, ent->modelList_attack3, "dual_sword_attack_%i");
    // ent->model = ent->modelList_attack[0];
     //ent->attackModel = gf3d_model_load("sword_shield_attack_5");
    // ent->attackModel2 = gf3d_model_load("sword_shield_attack_10");
@@ -90,10 +174,6 @@ Entity* player_new(Vector3D position)
     ent->framesMax = 14;
 
     ent->isPaused = 1;
-
-    ent->health = 50;
-    ent->mana = 100;
-    ent->armor = 1;
 
     ent->velocity.x = 1;
     ent->velocity.y = 1;

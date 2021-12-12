@@ -100,20 +100,20 @@ int main(int argc,char *argv[])
 
     gf3d_camera_set_scale(vector3d(1, 1, 1));
 
-    player = player_new(vector3d(0, 0, 0));
+    player = player_new(vector3d(0, 0, 0), "config/player.json");
 
-    monster_new(vector3d(50, 50, 0));
+    monster_new(vector3d(50, 50, 0), "config/monster.json");
 
-    monster_new(vector3d(-50, 50, 0));
+    monster_new(vector3d(-50, 50, 0), "config/monster.json");
 
     cube_new(vector3d(100, 0, 0), 0);
     //wall_new(vector3d(-100, 0, 0), 0);
     //wall_new(vector3d(0, 100, 0), M_PI/2);
     //wall_new(vector3d(0, -100, 0), M_PI/2);
 
-    monster_new(vector3d(50, -50, 0));
+    monster_new(vector3d(50, -50, 0), "config/monster.json");
 
-    monster_new(vector3d(-50, -50, 0));
+    monster_new(vector3d(-50, -50, 0), "config/monster.json");
 
     //ireball_new(vector3d(-110, -110, 0), 0);
 

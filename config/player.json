@@ -1,0 +1,18 @@
+{
+  "player": {
+    "modellist": {
+      "moveset1": "sword_shield_attack_%i",
+      "moveset2": "long_sword_attack_%i",
+      "moveset3": "dual_sword_attack_%i"
+    },
+    "model": {
+      "model1": "playermodel",
+      "model2": "playermodel_2",
+      "model3": "playermodel_3"
+    },
+    "health": 50,
+    "mana": 100,
+    "damage": 20,
+    "armor": 1
+  }
+}

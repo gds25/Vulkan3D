@@ -1,0 +1,8 @@
+{
+  "monster": {
+    "modellist": "dino_attack_%i",
+    "model": "dino",
+    "health": 100,
+    "damage": 10
+  }
+}

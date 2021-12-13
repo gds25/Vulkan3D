@@ -1,8 +1,8 @@
 {
   "angrymonster": {
-    "modellist": "dino2_jump_%i",
+    "modellist": "dino2_bite_0000%i",
     "model": "dino2",
     "health": 100,
-    "damage": 10
+    "damage": 15
   }
 }

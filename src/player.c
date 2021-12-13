@@ -129,6 +129,35 @@ Entity* player_new(Vector3D position, char* filename)
         slog("player data (%s) has no model", filename);
     }
 
+    modelName2 = sj_get_string_value(sj_object_get_value(mjson, "rollright"));
+    modelName1 = sj_get_string_value(sj_object_get_value(mjson, "rollleft"));
+    modelName3 = sj_get_string_value(sj_object_get_value(mjson, "dead"));
+
+    if (modelName1)
+    {
+        model_list_init(ent, 27, ent->modelList_move1, modelName1);
+    }
+    else
+    {
+        slog("player data (%s) has no model", filename);
+    }
+    if (modelName2)
+    {
+        model_list_init(ent, 27, ent->modelList_move2, modelName2);
+    }
+    else
+    {
+        slog("player data (%s) has no model", filename);
+    }
+    if (modelName3)
+    {
+        model_list_init(ent, 29, ent->modelList_move3, modelName3);
+    }
+    else
+    {
+        slog("player data (%s) has no model", filename);
+    }
+
     ent->health = sj_get_integer_value(sj_object_get_value(pjson, "health"),NULL);
     ent->mana = sj_get_integer_value(sj_object_get_value(pjson, "mana"),NULL);
     ent->damage = sj_get_integer_value(sj_object_get_value(pjson, "damage"),NULL);
@@ -168,12 +197,16 @@ Entity* player_new(Vector3D position, char* filename)
 
    // ent->acceleration.z = 10;
     ent->isJumping = 0;
+    ent->isRolling = 0;
     ent->isAttacking = 0;
     ent->isIdle = 1;
     ent->attackFrame = 0;
     ent->framesMax = 14;
+    ent->rollFramesMax = 25;
+    ent->deathFramesMax = 28;
 
     ent->isPaused = 1;
+    ent->isDead = 0;
 
     ent->velocity.x = 1;
     ent->velocity.y = 1;
@@ -204,14 +237,19 @@ void player_think(Entity* self)
         //slog("unpaused");
         self->isPaused = 0;
     }
+    if (self->health <= 0) {
+        self->isDead = 1;
+        self->isIdle = 0;
+        player_on_death(self);
+    }
 
     if (!self->isPaused) {
         if (keys[SDL_SCANCODE_W] && self->isIdle) {
             //slog("here");
             self->futurePosition.y += self->velocity.y * (0.035 * cos(self->rotation.z));
             self->futurePosition.x -= self->velocity.x * (0.035 * sin(self->rotation.z));
-            slog("position x = %f; position y = %f", self->position.x, self->position.y); 
-            slog("future position x = % f; future position y = % f, future position z = % f", self->futurePosition.x, self->futurePosition.y, self->futurePosition.z);
+            //slog("position x = %f; position y = %f", self->position.x, self->position.y); 
+            //slog("future position x = % f; future position y = % f, future position z = % f", self->futurePosition.x, self->futurePosition.y, self->futurePosition.z);
 
         }
         if (keys[SDL_SCANCODE_S] && self->isIdle) {
@@ -221,23 +259,36 @@ void player_think(Entity* self)
             //gfc_matrix_rotate(self->modelMat, self->modelMat, self->rotation.z, vector3d(0, 0, 1));
         }
         if (keys[SDL_SCANCODE_A] && self->isIdle) {
-            self->futurePosition.y -= self->velocity.y * (0.015 * sin(self->rotation.z));
-            self->futurePosition.x -= self->velocity.x * (0.015 * cos(self->rotation.z));
+                self->futurePosition.y -= self->velocity.y * (0.015 * sin(self->rotation.z));
+                self->futurePosition.x -= self->velocity.x * (0.015 * cos(self->rotation.z));
             // slog("position x = %f; position y = %f", self->position.x, self->position.y);
         }
         if (keys[SDL_SCANCODE_D] && self->isIdle) {
-            self->futurePosition.y += self->velocity.y * (0.015 * sin(self->rotation.z));
-            self->futurePosition.x += self->velocity.x * (0.015 * cos(self->rotation.z));
+ 
+                self->futurePosition.y += self->velocity.y * (0.015 * sin(self->rotation.z));
+                self->futurePosition.x += self->velocity.x * (0.015 * cos(self->rotation.z));
         }
-        if (keys[SDL_SCANCODE_SPACE] && !self->isJumping) {
+        if (keys[SDL_SCANCODE_SPACE] && !self->isJumping && !self->isRolling) {
             self->isJumping = 1;
             //self->isIdle = 0;
             self->lastTime = SDL_GetTicks();
         }
-        if ((keys[SDL_SCANCODE_Z] && self->isIdle)) {
+        if (((keys[SDL_SCANCODE_Z] || (SDL_GetMouseState(&mousex, &mousey) & SDL_BUTTON_LMASK != 0)) && self->isIdle)) {
             self->isAttacking = 1;
             self->isIdle = 0;
             self->lastTime = SDL_GetTicks();
+        }
+
+        if (keys[SDL_SCANCODE_Q] && !self->isRolling && !self->isJumping) {
+            self->isRolling = 1;
+            self->isIdle = 0;
+            self->rightRoll = 0; self->leftRoll = 1;
+        }
+
+        if (keys[SDL_SCANCODE_E] && !self->isRolling && !self->isJumping) {
+            self->isRolling = 1;
+            self->isIdle = 0;
+            self->rightRoll = 1; self->leftRoll = 0;
         }
 
         /* if (keys[SDL_SCANCODE_UP])self->rotation.x += 0.0010;
@@ -303,7 +354,9 @@ void player_think(Entity* self)
 
 
         if (self->isJumping)player_jump(self);
-        if (self->isAttacking) {
+        if (self->isRolling)player_roll(self);
+        else if (self->isDead)player_on_death(self);
+        else if (self->isAttacking) {
             //("attackFrame: %i", self->attackFrame);
             player_attack(self);
 
@@ -362,7 +415,8 @@ void player_think(Entity* self)
         slog("future pos x: %i, y: %i", self->futurePosition.x, self->futurePosition.y);
     }
 
-
+    if (self->futurePosition.z < 0) self->futurePosition.z = 0;
+    
 }
 
 void player_update(Entity* self)
@@ -408,6 +462,51 @@ void player_jump(Entity* self) {
     }
     //isJumping = 0;
 }
+
+void player_roll(Entity* self) {
+    self->currentTime = SDL_GetTicks();
+    if (self->currentTime - self->lastTime > 50) {
+        if (self->attackFrame > self->rollFramesMax) {
+            self->attackFrame = 0;
+            self->isIdle = 1;
+            self->isRolling = 0;
+            self->model = self->idleModel[self->character];
+            //gf3d_model_free(self->attackModel);
+        }
+        else {
+            if (self->leftRoll == 1) {
+                self->model = self->modelList_move1[self->attackFrame];
+            }
+            if (self->rightRoll == 1) {
+                self->model = self->modelList_move2[self->attackFrame];
+            }
+            self->attackFrame++;
+        }
+        self->lastTime = SDL_GetTicks();
+    }
+    if (self->leftRoll == 1) {
+        self->futurePosition.y -= self->velocity.y * (0.03 * sin(self->rotation.z));
+        self->futurePosition.x -= self->velocity.x * (0.03 * cos(self->rotation.z));
+    }
+    if (self->rightRoll == 1) {
+        self->futurePosition.y += self->velocity.y * (0.03 * sin(self->rotation.z));
+        self->futurePosition.x += self->velocity.x * (0.03 * cos(self->rotation.z));
+    }
+}
+
+void player_on_death(Entity *self) {
+    self->currentTime = SDL_GetTicks();
+    if (self->currentTime - self->lastTime > 50) {
+        slog("1");
+        self->model = self->modelList_move3[self->attackFrame];
+        if (self->attackFrame < self->deathFramesMax) {
+            slog("2");
+            self->attackFrame++;
+        }
+        self->lastTime = SDL_GetTicks();
+    }
+}
+
 
 void player_attack(Entity *self) {
     //slog("attackFrame: %i", attackFrame);

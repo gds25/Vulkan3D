@@ -9,6 +9,7 @@ typedef struct Entity_S {
 	Uint8	_inuse;
 	Matrix4 modelMat;
 
+	float walkFrame;
 	Uint8 attackFrame; //current attack animation frame to get corresponding model
 	Uint8 framesMax; //total number of  frames for a particular animation 
 
@@ -16,14 +17,20 @@ typedef struct Entity_S {
 
 	Model* model; //current entity model used
 	Model* modelList_attack[20]; //to be populated with attack animation models
-	Model* modelList_attack2[20];
+	Model* modelList_attack2[30];
 	Model* modelList_attack3[20];
+
+	Uint8 rollFramesMax;
+	Uint8 deathFramesMax;
+	Model* modelList_move1[30];
+	Model* modelList_move2[30];
+	Model* modelList_move3[30];
 
 	Uint8 character; //for use in player file, specifies the weapon you are using
 
 	void (*think)(struct Entity_S* self);
 	void (*update)(struct Entity_S* self);
-	Uint32	health; //entity stats
+	int	health; //entity stats
 	Uint32  healthRegen;
 	Uint32	mana;
 	Uint32  manaRegen;
@@ -37,6 +44,9 @@ typedef struct Entity_S {
 	Vector3D acceleration;
 
 	Uint8 isJumping; //entity states
+	Uint8 isRolling;
+	Uint8 rightRoll;
+	Uint8 leftRoll;
 	Uint8 isAttacking;
 	Uint8 isIdle;
 	Uint8 poweredUp;
@@ -63,6 +73,7 @@ typedef struct Entity_S {
 	Uint8 isPlayer; //is entity the player ent
 	Uint8 isMonster; //is entity a monster ent
 	Uint8 isPaused;
+	Uint8 isDead;
 
 	Uint8 attackedThisSwing; //check if monster was hit on player attack animation
 	Uint8 hasAttacked; //check if monster hit player on attack anumation

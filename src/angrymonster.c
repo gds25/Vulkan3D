@@ -103,7 +103,7 @@ void angry_monster_think(Entity* self)
     //slog("hol up = %f", playerPos.x + playerPos.y + playerPos.z);
 
     if (d < maxAttackDist * maxAttackDist) {
-        monster_attack(self);
+        angry_monster_attack(self);
     }
     else {
         self->attackFrame = 0;
@@ -141,9 +141,9 @@ void angry_monster_get_aabb(Entity* self) {
 }
 
 void jump_attack_get_aabb(Entity* self) {
-    self->maxWeaponAABB.x = self->position.x - 10 * sin(self->rotation.z); //-sin(self->rotation.z);
-    self->maxWeaponAABB.y = self->position.y + 10 * cos(self->rotation.z); //+cos(self->rotation.z);
-    self->maxWeaponAABB.z = self->position.z + 5;
+    self->maxWeaponAABB.x = self->position.x - 20 * sin(self->rotation.z); //-sin(self->rotation.z);
+    self->maxWeaponAABB.y = self->position.y + 20 * cos(self->rotation.z); //+cos(self->rotation.z);
+    self->maxWeaponAABB.z = self->position.z + 10;
 
     self->minWeaponAABB.x = self->position.x; // +sin(self->rotation.z);
     self->minWeaponAABB.y = self->position.y; // 6 - cos(self->rotation.z);
@@ -151,7 +151,7 @@ void jump_attack_get_aabb(Entity* self) {
 }
 
 void angry_monster_attack(Entity* self) {
-    attack_get_aabb(self);
+    jump_attack_get_aabb(self);
     //slog("attackFrame: %i", attackFrame);
     //slog("has attacked: %i", self->hasAttacked);
     self->jumpTime = SDL_GetTicks();

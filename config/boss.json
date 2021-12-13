@@ -1,0 +1,12 @@
+{
+  "boss": {
+    "modellist": {
+      "walk": "boss_walk_0000%i",
+      "stomp": "boss_stomp_0000%i",
+      "crawl": "boss_stomp_0000%i"
+    },
+    "model": "boss_walk__0",
+    "health": 150,
+    "damage": 50
+  }
+}

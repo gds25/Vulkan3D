@@ -3,6 +3,7 @@
 #include "simple_logger.h"
 #include "gfc_vector.h"
 #include "gfc_matrix.h"
+#include "gfc_audio.h"
 
 #include "gf3d_vgraphics.h"
 #include "gf3d_pipeline.h"
@@ -17,6 +18,7 @@
 #include "player.h"
 #include "monster.h"
 #include "angrymonster.h"
+#include "boss.h"
 #include "fireball.h"
 #include "cube.h"
 #include "wall.h"
@@ -42,9 +44,13 @@ int main(int argc,char *argv[])
     Sprite* manabar = NULL; 
     Sprite* healthbg = NULL;
     Sprite* manabg = NULL;
+    Sprite* deathScreen = NULL;
     World* w;
 
     Entity* player;
+
+    Sound* menuTheme = NULL;
+    Sound* deathSound = NULL;
     
     for (a = 1; a < argc;a++)
     {
@@ -69,6 +75,15 @@ int main(int argc,char *argv[])
     // --- initialize entity system
     entity_system_init(1024);
 
+    // --- initialize sound system
+    gfc_audio_init(
+        1024,
+        2,
+        2,
+        1024,
+        1,
+        1);
+
     // main game loop
     slog("gf3d main loop begin");
 
@@ -80,12 +95,16 @@ int main(int argc,char *argv[])
     manabar = gf3d_sprite_load("images/manabar.png", -1, -1, 1);
     healthbg = gf3d_sprite_load("images/healthbg.png", -1, -1, 1);
     manabg = gf3d_sprite_load("images/manabg.png", -1, -1, 1);
+    deathScreen = gf3d_sprite_load("images/deathscreen.png", -1, -1, 1);
+
+    menuTheme = gfc_sound_load("sounds/menuTheme.wav", 1.0, 1);
+    deathSound = gfc_sound_load("sounds/deathSound.wav", 1.0, 1);
     //gf3d_sprite_draw(mouse, vector2d(100, 100), vector2d(1, 1), (Uint32)mouseFrame);
     //gf3d_sprite_draw(mainMenu, vector2d(0, 0), vector2d(1, 1), 0);
 
     w = world_load("config/world.json");
 
-    
+    //gfc_sound_play(menuTheme, -1, 1.0, -1, -1);
     //Entity *agumon = agumon_new();
 
 	/*
@@ -101,23 +120,7 @@ int main(int argc,char *argv[])
 
     gf3d_camera_set_scale(vector3d(1, 1, 1));
 
-    player = player_new(vector3d(250, 250, 0), "config/player.json");
-
-    monster_new(vector3d(50, 50, 0), "config/monster.json");
-
-    monster_new(vector3d(-50, 50, 0), "config/monster.json");
-
-    //cube_new(vector3d(100, 0, 0), 0);
-    //wall_new(vector3d(-100, 0, 0), 0);
-    //wall_new(vector3d(0, 100, 0), M_PI/2);
-    //wall_new(vector3d(0, -100, 0), M_PI/2);
-
-    monster_new(vector3d(50, -50, 0), "config/monster.json");
-
-    monster_new(vector3d(-50, -50, 0), "config/monster.json");
-
-    angry_monster_new(vector3d(0, 0, 0), "config/angrymonster.json");
-
+    
   //  wall_new(vector3d(-100, 0, 0), 0);
   //  wall_new(vector3d(100, 0, 0), M_PI);
 
@@ -178,7 +181,10 @@ int main(int argc,char *argv[])
                 gf3d_sprite_draw(healthbar, vector2d(1200 - (3*player->health), 75), vector2d(1, 1), 0);
                 gf3d_sprite_draw(manabar, vector2d(1200 - (3*player->mana), 125), vector2d(1, 1), 0);
 
-
+                if (player->isDead) {
+                    gf3d_sprite_draw(deathScreen, vector2d(0, 0), vector2d(1, 1), 0);
+                    if (player->attackFrame == 0) gfc_sound_play(deathSound, 0, 1.0, -1, -1);
+                }
             }
                 
                 //gf3d_model_draw(model,bufferFrame,commandBuffer,modelMat);
@@ -201,26 +207,30 @@ int main(int argc,char *argv[])
             }
             slog("mouse click: x = %i, y = %i", mousex, mousey);
         }
-        if ((player->isPaused & keys[SDL_SCANCODE_9]) || player->health <= 0) {
+
+        //if (player->health <= 0) gfc_sound_play(deathSound, 0, 1.0, -1, -1);
+        if ((player->isPaused & keys[SDL_SCANCODE_9]) || (player->isDead && SDL_GetMouseState(&mousex, &mousey) && SDL_BUTTON_LMASK != 0
+            & mousex >= 315 & mousex <= 871 && mousey >= 269 && mousey <= 395)) {
+            gfc_sound_play(deathSound, 0, 1.0, -1, -1);
+            //world_delete(w);
             entity_system_close();
             gf3d_model_manager_close();
 
-            entity_system_init(1024);
             gf3d_model_manager_init(1024, gf3d_swapchain_get_swap_image_count(), gf3d_vgraphics_get_default_logical_device());
-            player = player_new(vector3d(0, 0, 0), "config/player.json");
+            w = world_load("config/world.json");
+            entity_system_init(1024);
+            player = player_new(vector3d(250, 250, 0), "config/player.json");
 
-            monster_new(vector3d(50, 50, 0), "config/monster.json");
+            for (int i = 5; i < 300; i = i + 150) {
+                monster_new(vector3d(i, i, 0), "config/monster.json");
+                angry_monster_new(vector3d(i + 50, i + 50, 0), "config/angrymonster.json");
+                monster_new(vector3d(i - 300, i - 300, 0), "config/monster.json");
+                angry_monster_new(vector3d(i - 250, i - 250, 0), "config/angrymonster.json");
+                monster_new(vector3d(i - 300, i, 0), "config/monster.json");
+                angry_monster_new(vector3d(i - 250, i, 0), "config/angrymonster.json");
+            }
 
-            monster_new(vector3d(-50, 50, 0), "config/monster.json");
-
-            cube_new(vector3d(100, 0, 0), 0);
-            //wall_new(vector3d(-100, 0, 0), 0);
-            //wall_new(vector3d(0, 100, 0), M_PI/2);
-            //wall_new(vector3d(0, -100, 0), M_PI/2);
-
-            monster_new(vector3d(50, -50, 0), "config/monster.json");
-
-            monster_new(vector3d(-50, -50, 0), "config/monster.json");
+            boss_new(vector3d(200, -200, 0), "config/boss.json");
 
         }
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition

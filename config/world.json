@@ -12,7 +12,7 @@
 			"moveset1": "sword_shield_attack_%i",
 			"moveset2": "long_sword_attack_%i",
 			"moveset3": "dual_sword_attack_%i"
-		}
+		},
 		"health": 50,
 		"mana": 100,
 		"damage": 20,

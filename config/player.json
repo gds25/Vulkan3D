@@ -1,6 +1,9 @@
 {
   "player": {
     "modellist": {
+      "rollright": "roll_right_0000%i",
+      "rollleft": "roll_left_0000%i",
+      "dead": "playermodel_dead_0000%i",
       "moveset1": "sword_shield_attack_%i",
       "moveset2": "long_sword_attack_%i",
       "moveset3": "dual_sword_attack_%i"

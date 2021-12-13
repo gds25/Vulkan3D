@@ -1,0 +1,14 @@
+# Blender MTL File: 'None'
+# Material Count: 1
+
+newmtl mutant_M.001
+Ns 55.384614
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump C:\\Users\\Gabriel Souza\\Downloads\\Walking (1).fbm\\Mutant_normal.png
+map_Kd C:\\Users\\Gabriel Souza\\Downloads\\Walking (1).fbm\\Mutant_diffuse.png

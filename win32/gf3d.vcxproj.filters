@@ -135,6 +135,9 @@
     <ClInclude Include="..\include\angrymonster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\boss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\gfc\simple_json\src\simple_json.c">
@@ -261,6 +264,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\angrymonster.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\boss.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

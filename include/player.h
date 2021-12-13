@@ -30,6 +30,18 @@ void player_update(Entity* self);
 void player_jump(Entity* self);
 
 /**
+* @brief animate player rolling to the left or right
+* @param self the player entity
+*/
+void player_roll(Entity* self);
+
+/**
+* @brief animate player on death
+* @param self the player entity
+*/
+void player_on_death(Entity* self);
+
+/**
 * @brief change attack animation frame and calculate weapon collision points
 * @param self the player entity
 */

@@ -87,14 +87,14 @@ Model * gf3d_model_load(char * filename)
     model->mesh = gf3d_mesh_load(assetname);
     slog(filename);
 
-    if (strncmp(filename, "sword_shield", 12) == 0 || strncmp(filename, "playermodel", 11) == 0 || strncmp(filename, "long_sword", 10) == 0 || strncmp(filename, "dual_sword", 10) == 0) {
-        slog("got the right texture: %c", filename);
+    if (strncmp(filename, "roll", 4) == 0 || strncmp(filename, "sword_shield", 12) == 0 || strncmp(filename, "playermodel", 11) == 0 || strncmp(filename, "long_sword", 10) == 0 || strncmp(filename, "dual_sword", 10) == 0)  {
+        //slog("got the right texture: %c", filename);
         model->texture = gf3d_texture_load("images/playermodel.png");
         slog("loaded the texture");
         //snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
     }
     else if (strncmp(filename, "dino2", 5) == 0) {
-        //slog("got the right texture");
+        slog("got the right texture");
         model->texture = gf3d_texture_load("images/dino2.png");
         //snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
     }
@@ -103,11 +103,16 @@ Model * gf3d_model_load(char * filename)
         model->texture = gf3d_texture_load("images/dino.png");
         //snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
     }
+    else if (strncmp(filename, "boss", 4) == 0) {
+        slog("got the right texture");
+        model->texture = gf3d_texture_load("images/boss.png");
+        //snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
+    }
     else {
         snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
         model->texture = gf3d_texture_load(assetname);
     }
-    
+    slog("return texture");
     return model;
 }
 

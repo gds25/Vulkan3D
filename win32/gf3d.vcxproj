@@ -104,6 +104,7 @@
     <ClInclude Include="..\gfc\simple_json\include\simple_json_value.h" />
     <ClInclude Include="..\gfc\simple_logger\include\simple_logger.h" />
     <ClInclude Include="..\include\agumon.h" />
+    <ClInclude Include="..\include\angrymonster.h" />
     <ClInclude Include="..\include\cube.h" />
     <ClInclude Include="..\include\entity.h" />
     <ClInclude Include="..\include\fireball.h" />
@@ -143,6 +144,7 @@
     <ClCompile Include="..\gfc\src\gfc_types.c" />
     <ClCompile Include="..\gfc\src\gfc_vector.c" />
     <ClCompile Include="..\src\agumon.c" />
+    <ClCompile Include="..\src\angrymonster.c" />
     <ClCompile Include="..\src\cube.c" />
     <ClCompile Include="..\src\entity.c" />
     <ClCompile Include="..\src\fireball.c" />

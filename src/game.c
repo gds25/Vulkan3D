@@ -16,6 +16,7 @@
 #include "agumon.h"
 #include "player.h"
 #include "monster.h"
+#include "angrymonster.h"
 #include "fireball.h"
 #include "cube.h"
 #include "wall.h"
@@ -100,13 +101,13 @@ int main(int argc,char *argv[])
 
     gf3d_camera_set_scale(vector3d(1, 1, 1));
 
-    player = player_new(vector3d(0, 0, 0), "config/player.json");
+    player = player_new(vector3d(250, 250, 0), "config/player.json");
 
     monster_new(vector3d(50, 50, 0), "config/monster.json");
 
     monster_new(vector3d(-50, 50, 0), "config/monster.json");
 
-    cube_new(vector3d(100, 0, 0), 0);
+    //cube_new(vector3d(100, 0, 0), 0);
     //wall_new(vector3d(-100, 0, 0), 0);
     //wall_new(vector3d(0, 100, 0), M_PI/2);
     //wall_new(vector3d(0, -100, 0), M_PI/2);
@@ -114,6 +115,11 @@ int main(int argc,char *argv[])
     monster_new(vector3d(50, -50, 0), "config/monster.json");
 
     monster_new(vector3d(-50, -50, 0), "config/monster.json");
+
+    angry_monster_new(vector3d(0, 0, 0), "config/angrymonster.json");
+
+  //  wall_new(vector3d(-100, 0, 0), 0);
+  //  wall_new(vector3d(100, 0, 0), M_PI);
 
     //ireball_new(vector3d(-110, -110, 0), 0);
 
@@ -195,7 +201,28 @@ int main(int argc,char *argv[])
             }
             slog("mouse click: x = %i, y = %i", mousex, mousey);
         }
+        if ((player->isPaused & keys[SDL_SCANCODE_9]) || player->health <= 0) {
+            entity_system_close();
+            gf3d_model_manager_close();
 
+            entity_system_init(1024);
+            gf3d_model_manager_init(1024, gf3d_swapchain_get_swap_image_count(), gf3d_vgraphics_get_default_logical_device());
+            player = player_new(vector3d(0, 0, 0), "config/player.json");
+
+            monster_new(vector3d(50, 50, 0), "config/monster.json");
+
+            monster_new(vector3d(-50, 50, 0), "config/monster.json");
+
+            cube_new(vector3d(100, 0, 0), 0);
+            //wall_new(vector3d(-100, 0, 0), 0);
+            //wall_new(vector3d(0, 100, 0), M_PI/2);
+            //wall_new(vector3d(0, -100, 0), M_PI/2);
+
+            monster_new(vector3d(50, -50, 0), "config/monster.json");
+
+            monster_new(vector3d(-50, -50, 0), "config/monster.json");
+
+        }
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition
     }    
 

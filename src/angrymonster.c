@@ -7,14 +7,9 @@
 #include "cube.h"
 #include "health.h"
 #include "monster.h"
+#include "angrymonster.h"
 
-
-void monster_die(Entity* self) {
-    health_new(self->position);
-    entity_free(self);
-}
-
-Entity* monster_new(Vector3D position, char* filename)
+Entity* angry_monster_new(Vector3D position, char* filename)
 {
     Entity* ent = NULL;
 
@@ -25,7 +20,7 @@ Entity* monster_new(Vector3D position, char* filename)
         return NULL;
     }
 
-    ent->isMonster = 1; 
+    ent->isMonster = 1;
 
     SJson* json, * pjson;
     char* modelName = NULL;
@@ -37,7 +32,7 @@ Entity* monster_new(Vector3D position, char* filename)
         free(ent);
         return NULL;
     }
-    pjson = sj_object_get_value(json, "monster");
+    pjson = sj_object_get_value(json, "angrymonster");
     if (!pjson)
     {
         slog("failed to find moster object in %s monster config", filename);
@@ -58,7 +53,7 @@ Entity* monster_new(Vector3D position, char* filename)
     modelName = sj_get_string_value(sj_object_get_value(pjson, "modellist"));
     if (modelName)
     {
-        model_list_init(ent, 16, ent->modelList_attack, modelName);
+        model_list_init(ent, 18, ent->modelList_attack, modelName);
     }
     else
     {
@@ -73,15 +68,15 @@ Entity* monster_new(Vector3D position, char* filename)
     //slog("idle model: %i", ent->idleModel);
     ent->model = ent->idleModel[0];
     // gfc_matrix_rotate(ent->modelMat, ent->modelMat, 90, vector3d(1, 0, 0));
-    ent->think = monster_think;
-    ent->update = monster_update;
+    ent->think = angry_monster_think;
+    ent->update = angry_monster_update;
     vector3d_copy(ent->position, position);
 
     ent->futurePosition.x = ent->position.x;
     ent->futurePosition.y = ent->position.y;
     ent->futurePosition.z = ent->position.z;
 
-    monster_get_aabb(ent);
+    angry_monster_get_aabb(ent);
 
     ent->rotation.z = -M_PI;
 
@@ -91,7 +86,7 @@ Entity* monster_new(Vector3D position, char* filename)
     return ent;
 }
 
-void monster_think(Entity* self)
+void angry_monster_think(Entity* self)
 {
     if (self->health <= 0) {
         monster_die(self);
@@ -114,60 +109,38 @@ void monster_think(Entity* self)
         self->attackFrame = 0;
         self->model = self->idleModel[0];
         if (d < maxChaseDist * maxChaseDist) {
-            monster_chase(self, playerPos); 
+            monster_chase(self, playerPos);
         }
         else {
             monster_pace(self);
         }
     }
-    
-    monster_get_aabb(self);
+
+    angry_monster_get_aabb(self);
     //slog("MONSTER max AABB x, y, z: %f, %f, %f, min AABB x, y, z: %f, %f, %f", self->maxAABB.x, self->maxAABB.y, self->maxAABB.z, self->minAABB.x, self->minAABB.y, self->minAABB.z);
 
 }
 
-void monster_update(Entity* self)
+void angry_monster_update(Entity* self)
 {
     if (!self)return;
     gfc_matrix_make_translation(self->modelMat, self->position);
-    gfc_matrix_rotate(self->modelMat, self->modelMat, (2*M_PI)-self->rotation.z, vector3d(0, 0, 1));
+    gfc_matrix_rotate(self->modelMat, self->modelMat, (2 * M_PI) - self->rotation.z, vector3d(0, 0, 1));
     //gfc_matrix_scale(self->modelMat, vector3d(2, 2, 2));
+
 }
 
-float get_distance_from_entity_squared(Entity *self, Vector3D pos) {
-    return pos.x + pos.y + pos.z;
-    //return (((self->position.x - pos.x) * (self->position.x - pos.x)) + ((self->position.y - pos.y) * (self->position.y - pos.y)) + ((self->position.z - pos.z) * (self->position.z - pos.z)));
+void angry_monster_get_aabb(Entity* self) {
+    self->maxAABB.x = self->futurePosition.x + 16; //-sin(self->rotation.z);
+    self->maxAABB.y = self->futurePosition.y + 16; //+cos(self->rotation.z);
+    self->maxAABB.z = self->futurePosition.z + 16;
+
+    self->minAABB.x = self->futurePosition.x - 16; // +sin(self->rotation.z);
+    self->minAABB.y = self->futurePosition.y - 16; // 6 - cos(self->rotation.z);
+    self->minAABB.z = self->futurePosition.z - 16;
 }
 
-void monster_chase(Entity* self, Vector3D playerPos) {
-    //slog("here");
-    self->rotation.z = -atan((self->futurePosition.x - playerPos.x) / (self->futurePosition.y - playerPos.y));
-
-    //self->futurePosition.x -= playerPos.x;
-    //self->futurePosition.y -= playerPos.y;
-
-    self->futurePosition.x -= (0.005 * sin(self->rotation.z));
-    self->futurePosition.y += (0.005 * cos(self->rotation.z));
-}
-
-void monster_pace(Entity* self) {
-    self->rotation.z += 0.0001;
-   
-    self->futurePosition.x -= (0.005 * sin(self->rotation.z));
-    self->futurePosition.y += (0.005 * cos(self->rotation.z));
-}
-
-void monster_get_aabb(Entity* self) {
-    self->maxAABB.x = self->futurePosition.x + 8; //-sin(self->rotation.z);
-    self->maxAABB.y = self->futurePosition.y + 8; //+cos(self->rotation.z);
-    self->maxAABB.z = self->futurePosition.z + 8;
-
-    self->minAABB.x = self->futurePosition.x-8; // +sin(self->rotation.z);
-    self->minAABB.y = self->futurePosition.y-8; // 6 - cos(self->rotation.z);
-    self->minAABB.z = self->futurePosition.z-8;
-}
-
-void attack_get_aabb(Entity* self) {
+void jump_attack_get_aabb(Entity* self) {
     self->maxWeaponAABB.x = self->position.x - 10 * sin(self->rotation.z); //-sin(self->rotation.z);
     self->maxWeaponAABB.y = self->position.y + 10 * cos(self->rotation.z); //+cos(self->rotation.z);
     self->maxWeaponAABB.z = self->position.z + 5;
@@ -177,13 +150,13 @@ void attack_get_aabb(Entity* self) {
     self->minWeaponAABB.z = self->position.z;
 }
 
-void monster_attack(Entity* self) {
+void angry_monster_attack(Entity* self) {
     attack_get_aabb(self);
     //slog("attackFrame: %i", attackFrame);
     //slog("has attacked: %i", self->hasAttacked);
     self->jumpTime = SDL_GetTicks();
     if (self->jumpTime - self->lastJumpTime > 50) {
-        if (self->attackFrame > 15) {
+        if (self->attackFrame > 17) {
             self->attackFrame = 0;
             self->isIdle = 1;
             self->isAttacking = 0;

@@ -136,7 +136,8 @@ void entity_update_all() {
 }
 
 void model_list_init(Entity* self, Uint32 max, Model* modelList[], char* prefix) {
-	//self->modelList_attack = gfc_allocate_array(sizeof(Model*), max);
+	//modelList = gfc_allocate_array(sizeof(Model*), max);
+	slog("allocated array");
 	if (modelList == NULL) {
 		slog("Model system initialization error: cannot allocate 0 entities.");
 		return;
@@ -146,7 +147,7 @@ void model_list_init(Entity* self, Uint32 max, Model* modelList[], char* prefix)
 		snprintf(modelName, GFCLINELEN, prefix, i);
 		slog(modelName);
 		// Model modelInsert = gf3d_model_load(modelName);
-		 //memcpy(&self->modelList_attack[i], gf3d_model_load(modelName), sizeof(Model*));
+		//memcpy(&modelList[i], gf3d_model_load(modelName), sizeof(Model*));
 		modelList[i] = gf3d_model_load(modelName);
 		//slog("model: %i", self->modelList_attack[i]);
 	}
@@ -233,15 +234,29 @@ void check_collisions() {
 					//entity_manager.entity_list[i].position.z;
 				}
 				else if (entity_manager.entity_list[i].futurePosition.x < 295 && entity_manager.entity_list[i].futurePosition.y < 295 && entity_manager.entity_list[i].futurePosition.x > -295 && entity_manager.entity_list[i].futurePosition.y > -295) {
+					if (entity_manager.entity_list[i].position.x > entity_manager.entity_list[i].futurePosition.x && entity_manager.entity_list[i].futurePosition.x < 10 && entity_manager.entity_list[i].futurePosition.x > -10 && !(entity_manager.entity_list[i].futurePosition.y < 273 && entity_manager.entity_list[i].futurePosition.y > 176) && !(entity_manager.entity_list[i].futurePosition.y > -273 && entity_manager.entity_list[i].futurePosition.y < -176)) {
+						entity_manager.entity_list[i].futurePosition.x += 1; entity_manager.entity_list[i].position.x += 1; 
+					}
+					else if (entity_manager.entity_list[i].position.x <  entity_manager.entity_list[i].futurePosition.x && entity_manager.entity_list[i].futurePosition.x > -10 && entity_manager.entity_list[i].futurePosition.x < 10 && !(entity_manager.entity_list[i].futurePosition.y < 273 && entity_manager.entity_list[i].futurePosition.y > 176) && !(entity_manager.entity_list[i].futurePosition.y > -273 && entity_manager.entity_list[i].futurePosition.y < -176)) {
+						entity_manager.entity_list[i].futurePosition.x -= 1; entity_manager.entity_list[i].position.x -= 1;
+					}
+					else if (entity_manager.entity_list[i].position.y > entity_manager.entity_list[i].futurePosition.y && entity_manager.entity_list[i].futurePosition.y < 10 && entity_manager.entity_list[i].futurePosition.y > -10 && !(entity_manager.entity_list[i].futurePosition.x > -273 && entity_manager.entity_list[i].futurePosition.x < -176)) { 
+						entity_manager.entity_list[i].futurePosition.y += 1; entity_manager.entity_list[i].position.y += 1; 
+					}
+					else if (entity_manager.entity_list[i].position.x < entity_manager.entity_list[i].futurePosition.y && entity_manager.entity_list[i].futurePosition.y > -10 && entity_manager.entity_list[i].futurePosition.y < 10 && !(entity_manager.entity_list[i].futurePosition.x > -273 && entity_manager.entity_list[i].futurePosition.x < -176)) { 
+						entity_manager.entity_list[i].futurePosition.y -= 1; entity_manager.entity_list[i].position.y -= 1; 
+					}
+					else {
 					entity_manager.entity_list[i].position.x = entity_manager.entity_list[i].futurePosition.x;
 					entity_manager.entity_list[i].position.y = entity_manager.entity_list[i].futurePosition.y;
 					entity_manager.entity_list[i].position.z = entity_manager.entity_list[i].futurePosition.z;
+					}
 				}
 				else {
-					if (entity_manager.entity_list[i].futurePosition.x > 295) entity_manager.entity_list[i].futurePosition.x -= 10; entity_manager.entity_list[i].position.x -= 10;
-					if (entity_manager.entity_list[i].futurePosition.y > 295) entity_manager.entity_list[i].futurePosition.y -= 10; entity_manager.entity_list[i].position.y -= 10;
-					if (entity_manager.entity_list[i].futurePosition.x < -295) entity_manager.entity_list[i].futurePosition.x += 10; entity_manager.entity_list[i].position.x += 10;
-					if (entity_manager.entity_list[i].futurePosition.y < -295) entity_manager.entity_list[i].futurePosition.y += 10; entity_manager.entity_list[i].position.y += 10;
+					if (entity_manager.entity_list[i].futurePosition.x > 295) { entity_manager.entity_list[i].futurePosition.x -= 10; entity_manager.entity_list[i].position.x -= 10; }
+					if (entity_manager.entity_list[i].futurePosition.y > 295) { entity_manager.entity_list[i].futurePosition.y -= 10; entity_manager.entity_list[i].position.y -= 10; }
+					if (entity_manager.entity_list[i].futurePosition.x < -295) { entity_manager.entity_list[i].futurePosition.x += 10; entity_manager.entity_list[i].position.x += 10; }
+					if (entity_manager.entity_list[i].futurePosition.y < -295) { entity_manager.entity_list[i].futurePosition.y += 10; entity_manager.entity_list[i].position.y += 10; }
 
 				}
 			}

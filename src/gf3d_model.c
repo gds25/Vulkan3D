@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "simple_logger.h"
+#include "simple_json.h"
 
 #include "gf3d_model.h"
 #include "gf3d_commands.h"
@@ -90,6 +91,11 @@ Model * gf3d_model_load(char * filename)
         slog("got the right texture: %c", filename);
         model->texture = gf3d_texture_load("images/playermodel.png");
         slog("loaded the texture");
+        //snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
+    }
+    else if (strncmp(filename, "dino2", 5) == 0) {
+        //slog("got the right texture");
+        model->texture = gf3d_texture_load("images/dino2.png");
         //snprintf(assetname, GFCLINELEN, "images/%s.png", filename);
     }
     else if (strncmp(filename, "dino", 4) == 0) {

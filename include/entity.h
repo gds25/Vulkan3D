@@ -86,6 +86,10 @@ void check_collisions();
 void model_list_init(Entity* self, Uint32 max, Model* modelList[], char* prefix);
 
 /**
+* @brief close entity subsystem
+*/
+void entity_system_close();
+/**
 * @brief initialize entity subsystem
 * @param max maximum amount of entities that can exist at once
 */

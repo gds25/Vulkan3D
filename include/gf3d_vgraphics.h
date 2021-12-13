@@ -23,6 +23,11 @@ void gf3d_vgraphics_init(
 );
 
 /**
+ * @brief close model manager
+ */
+void gf3d_model_manager_close();
+
+/**
  * @brief kick off a rendering call for the next buffer frame.
  */
 void gf3d_vgraphics_render_start();

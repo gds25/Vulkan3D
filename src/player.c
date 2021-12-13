@@ -208,10 +208,10 @@ void player_think(Entity* self)
     if (!self->isPaused) {
         if (keys[SDL_SCANCODE_W] && self->isIdle) {
             //slog("here");
-            self->futurePosition.y += self->velocity.y * (0.015 * cos(self->rotation.z));
-            self->futurePosition.x -= self->velocity.x * (0.015 * sin(self->rotation.z));
-            //slog("position x = %f; position y = %f", self->position.x, self->position.y); 
-            //slog("future position x = % f; future position y = % f, future position z = % f", self->futurePosition.x, self->futurePosition.y, self->futurePosition.z);
+            self->futurePosition.y += self->velocity.y * (0.035 * cos(self->rotation.z));
+            self->futurePosition.x -= self->velocity.x * (0.035 * sin(self->rotation.z));
+            slog("position x = %f; position y = %f", self->position.x, self->position.y); 
+            slog("future position x = % f; future position y = % f, future position z = % f", self->futurePosition.x, self->futurePosition.y, self->futurePosition.z);
 
         }
         if (keys[SDL_SCANCODE_S] && self->isIdle) {
@@ -356,6 +356,12 @@ void player_think(Entity* self)
     }
 
     player_set_pause_state(self);
+
+    if (SDL_GetMouseState(&mousex, &mousey) & SDL_BUTTON_LMASK != 0) {
+        slog("pos x: %i, y: %i", self->position.x, self->position.y);
+        slog("future pos x: %i, y: %i", self->futurePosition.x, self->futurePosition.y);
+    }
+
 
 }
 

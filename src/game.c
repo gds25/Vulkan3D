@@ -45,6 +45,7 @@ int main(int argc,char *argv[])
     Sprite* healthbg = NULL;
     Sprite* manabg = NULL;
     Sprite* deathScreen = NULL;
+    Sprite* ui = NULL;
     World* w;
 
     Entity* player;
@@ -96,6 +97,7 @@ int main(int argc,char *argv[])
     healthbg = gf3d_sprite_load("images/healthbg.png", -1, -1, 1);
     manabg = gf3d_sprite_load("images/manabg.png", -1, -1, 1);
     deathScreen = gf3d_sprite_load("images/deathscreen.png", -1, -1, 1);
+    ui = gf3d_sprite_load("images/ui.png", -1, -1, 1);
 
     menuTheme = gfc_sound_load("sounds/menuTheme.wav", 1.0, 1);
     deathSound = gfc_sound_load("sounds/deathSound.wav", 1.0, 1);
@@ -119,6 +121,19 @@ int main(int argc,char *argv[])
     */
 
     gf3d_camera_set_scale(vector3d(1, 1, 1));
+
+    player = player_new(vector3d(250, 250, 0), "config/player.json");
+
+    for (int i = 5; i < 300; i = i + 150) {
+        monster_new(vector3d(i, i, 0), "config/monster.json");
+        angry_monster_new(vector3d(i + 50, i + 50, 0), "config/angrymonster.json");
+        monster_new(vector3d(i - 300, i - 300, 0), "config/monster.json");
+        angry_monster_new(vector3d(i - 250, i - 250, 0), "config/angrymonster.json");
+        monster_new(vector3d(i - 300, i, 0), "config/monster.json");
+        angry_monster_new(vector3d(i - 250, i, 0), "config/angrymonster.json");
+    }
+
+    boss_new(vector3d(200, -200, 0), "config/boss.json");
 
     
   //  wall_new(vector3d(-100, 0, 0), 0);
@@ -180,6 +195,7 @@ int main(int argc,char *argv[])
                 gf3d_sprite_draw(healthbg, vector2d(900, 75), vector2d(1, 1), 0);
                 gf3d_sprite_draw(healthbar, vector2d(1200 - (3*player->health), 75), vector2d(1, 1), 0);
                 gf3d_sprite_draw(manabar, vector2d(1200 - (3*player->mana), 125), vector2d(1, 1), 0);
+                gf3d_sprite_draw(ui, vector2d(0, 0), vector2d(1, 1), 0);
 
                 if (player->isDead) {
                     gf3d_sprite_draw(deathScreen, vector2d(0, 0), vector2d(1, 1), 0);

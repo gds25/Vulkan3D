@@ -1,3 +1,16 @@
+# See "final" branch for final game
+- Built a functioning 3D dungeon RPG in C language using the Vulkan graphics engine, complete with multiple character models, attack animations, collision detection, and a class-based Entity Component System. 
+- Loaded character and world models using the Vulkan cross-platform API. 
+- Used SDL libraries to support keyboard and mouse inputs, and include simple images, 
+audio, and text in the game’s UI.
+- Used 3D vector math to calculate collisions and camera/character movement
+throughout the game world.
+- Created a class-based component system using C header files, declaring functions 
+and variables for all entity types within the game world.
+- Implemented keyframe automations imported from Autodesk Maya for each character 
+and enemy model.
+
+
 # gf3d
 a collection of utlitity functions designed to facilitate creating 3D games with ~~OpenGL~~ Vulkan and SDL2
 This project is specifically intended to function as an educational tool for my students taking 3D Game Programming.
